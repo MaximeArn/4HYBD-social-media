@@ -1,0 +1,7 @@
+{
+  "name": "be-unreal",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
