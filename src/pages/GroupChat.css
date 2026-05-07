@@ -1,0 +1,17 @@
+.group-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.group-title small {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.sender-name {
+  font-size: 0.75rem;
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  margin: 0 0 2px 4px;
+}

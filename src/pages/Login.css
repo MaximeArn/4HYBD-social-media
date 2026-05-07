@@ -1,0 +1,70 @@
+.login-content {
+  --background: var(--ion-color-primary);
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 40px 20px 20px;
+}
+
+.login-logo {
+  text-align: center;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.login-logo h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.login-logo p {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin-top: 8px;
+}
+
+.login-form {
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.login-error {
+  text-align: center;
+  margin: 8px 0;
+  font-size: 0.9rem;
+}
+
+.login-btn {
+  margin-bottom: 12px;
+  --border-radius: 12px;
+}
+
+.demo-section {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.demo-section ion-note {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+}
+
+.demo-accounts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.demo-accounts ion-button {
+  --color: rgba(255, 255, 255, 0.9);
+  font-size: 0.75rem;
+}

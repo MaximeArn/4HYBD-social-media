@@ -1,0 +1,46 @@
+.profile-header {
+  background: var(--ion-color-primary);
+  padding: 32px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: white;
+}
+
+.profile-avatar {
+  width: 90px !important;
+  height: 90px !important;
+  margin-bottom: 12px;
+  border: 3px solid rgba(255, 255, 255, 0.6);
+}
+
+.profile-username {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.profile-bio {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin: 0 0 6px;
+  max-width: 280px;
+}
+
+.profile-location {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.edit-card {
+  margin: 12px;
+}
+
+.profile-actions {
+  padding: 12px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
