@@ -1,25 +1,33 @@
 import { useState, useEffect } from 'react';
 import {
   IonPage,
+  IonContent,
+  IonAvatar,
+  IonButton,
+  IonIcon,
+  IonToast,
+  IonModal,
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonContent,
-  IonButton,
-  IonIcon,
-  IonAlert,
-  IonToast,
+  IonButtons,
 } from '@ionic/react';
-import { logOutOutline, trashOutline, createOutline, checkmarkOutline, closeOutline } from 'ionicons/icons';
+import {
+  createOutline,
+  checkmarkOutline,
+  closeOutline,
+  locationOutline,
+  imagesOutline,
+  settingsOutline,
+} from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
   updateUser,
-  deleteUser,
-  logout,
+  getStoriesByUser,
   type User,
+  type Story,
 } from '../services/fakeApi';
-import ProfileHeader from '../components/ProfileHeader';
 import './Profile.css';
 
 const VILLES = [
@@ -42,12 +50,11 @@ const COORDS: Record<string, { lat: number; lng: number }> = {
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [editing, setEditing] = useState(false);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [city, setCity] = useState('');
-  const [showLogoutAlert, setShowLogoutAlert] = useState(false);
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const history = useHistory();
 
@@ -57,14 +64,12 @@ const Profile: React.FC = () => {
 
   function loadUser() {
     const current = getCurrentUser();
-    if (!current) {
-      history.replace('/login');
-      return;
-    }
+    if (!current) { history.replace('/login'); return; }
     setUser(current);
     setUsername(current.username);
     setBio(current.bio);
     setCity(current.location.city);
+    setStories(getStoriesByUser(current.id));
   }
 
   function handleSave() {
@@ -77,7 +82,7 @@ const Profile: React.FC = () => {
     });
     if (updated) {
       setUser(updated);
-      setEditing(false);
+      setShowEditModal(false);
       setToastMsg('Profil mis à jour !');
     }
   }
@@ -87,19 +92,9 @@ const Profile: React.FC = () => {
     setUsername(user.username);
     setBio(user.bio);
     setCity(user.location.city);
-    setEditing(false);
+    setShowEditModal(false);
   }
 
-  function handleLogout() {
-    logout();
-    history.replace('/login');
-  }
-
-  function handleDelete() {
-    if (!user) return;
-    deleteUser(user.id);
-    history.replace('/login');
-  }
 
   if (!user) return null;
 
@@ -107,116 +102,147 @@ const Profile: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle>Mon profil</IonTitle>
-          <IonButton
-            slot="end"
-            fill="clear"
-            color="light"
-            onClick={() => (editing ? handleSave() : setEditing(true))}
-          >
-            <IonIcon icon={editing ? checkmarkOutline : createOutline} />
-          </IonButton>
-          {editing && (
-            <IonButton slot="end" fill="clear" color="light" onClick={handleCancelEdit}>
-              <IonIcon icon={closeOutline} />
+          <IonTitle><span className="toolbar-logo">Snapshoot</span></IonTitle>
+          <IonButtons slot="end">
+            <IonButton fill="clear" color="light" onClick={() => history.push('/tabs/settings')}>
+              <IonIcon icon={settingsOutline} />
             </IonButton>
-          )}
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
 
       <IonContent>
-        <div className="profile-wrapper">
-          <ProfileHeader
-            user={user}
-            editing={editing}
-            friendsCount={!editing ? user.friends.length : undefined}
-          />
+        {/* Hero */}
+        <div className="profile-hero">
+          <IonAvatar className="profile-avatar">
+            <img src={user.avatar} alt={user.username} />
+          </IonAvatar>
+          <h2 className="profile-username">{user.username}</h2>
+          {user.bio && <p className="profile-bio">{user.bio}</p>}
+          <p className="profile-location">
+            <IonIcon icon={locationOutline} />
+            {user.location.city}
+          </p>
+        </div>
 
-          {editing ? (
-            <div className="profile-edit-form">
-              <input
-                placeholder="Nom d'utilisateur"
-                value={username}
-                maxLength={30}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <textarea
-                placeholder="Bio"
-                value={bio}
-                maxLength={150}
-                rows={3}
-                onChange={(e) => setBio(e.target.value)}
-              />
-              <select value={city} onChange={(e) => setCity(e.target.value)}>
-                {VILLES.map((v) => (
-                  <option key={v} value={v}>{v}</option>
-                ))}
-              </select>
-              <IonButton expand="block" onClick={handleSave}>
-                Sauvegarder
-              </IonButton>
-            </div>
-          ) : (
-            <div className="profile-info-section">
-              <div className="profile-info-card">
-                <div className="profile-info-row">
-                  <span className="profile-info-label">Email</span>
-                  <span className="profile-info-value">{user.email}</span>
-                </div>
-                <div className="profile-info-row">
-                  <span className="profile-info-label">Ville</span>
-                  <span className="profile-info-value">{user.location.city}</span>
-                </div>
-                <div className="profile-info-row">
-                  <span className="profile-info-label">ID</span>
-                  <span className="profile-info-value" style={{ fontSize: '0.75rem', color: '#aaa' }}>{user.id}</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="profile-actions">
-            <IonButton expand="block" fill="outline" color="medium" onClick={() => setShowLogoutAlert(true)}>
-              <IonIcon icon={logOutOutline} slot="start" />
-              Se déconnecter
-            </IonButton>
-            <IonButton expand="block" fill="outline" color="danger" onClick={() => setShowDeleteAlert(true)}>
-              <IonIcon icon={trashOutline} slot="start" />
-              Supprimer mon compte
-            </IonButton>
+        {/* Stats */}
+        <div className="profile-stats">
+          <div className="profile-stat">
+            <span className="profile-stat-value">{stories.length}</span>
+            <span className="profile-stat-label">Stories</span>
+          </div>
+          <div className="profile-stat-divider" />
+          <div className="profile-stat">
+            <span className="profile-stat-value">{user.friends.length}</span>
+            <span className="profile-stat-label">Amis</span>
           </div>
         </div>
 
-        <IonAlert
-          isOpen={showLogoutAlert}
-          onDidDismiss={() => setShowLogoutAlert(false)}
-          header="Se déconnecter"
-          message="Tu vas être déconnecté(e). À bientôt !"
-          buttons={[
-            { text: 'Annuler', role: 'cancel' },
-            { text: 'Se déconnecter', handler: handleLogout },
-          ]}
-        />
+        {/* Edit button */}
+        <div className="profile-edit-btn-row">
+          <IonButton fill="outline" expand="block" onClick={() => setShowEditModal(true)}>
+            <IonIcon icon={createOutline} slot="start" />
+            Modifier le profil
+          </IonButton>
+        </div>
 
-        <IonAlert
-          isOpen={showDeleteAlert}
-          onDidDismiss={() => setShowDeleteAlert(false)}
-          header="Supprimer le compte"
-          message="Cette action est irréversible. Ton compte sera définitivement supprimé."
-          buttons={[
-            { text: 'Annuler', role: 'cancel' },
-            { text: 'Supprimer', role: 'destructive', handler: handleDelete },
-          ]}
-        />
-
-        <IonToast
-          isOpen={!!toastMsg}
-          message={toastMsg}
-          duration={2000}
-          onDidDismiss={() => setToastMsg('')}
-          position="bottom"
-        />
+        {/* Stories grid */}
+        {stories.length === 0 ? (
+          <div className="profile-empty-stories">
+            <IonIcon icon={imagesOutline} />
+            <p>Aucune story publiée</p>
+          </div>
+        ) : (
+          <div className="profile-stories-grid">
+            {stories.map((story) => (
+              <div key={story.id} className="profile-story-thumb">
+                <img src={story.imageUrl} alt={story.caption} />
+              </div>
+            ))}
+          </div>
+        )}
       </IonContent>
+
+      {/* Edit modal */}
+      <IonModal isOpen={showEditModal} onDidDismiss={handleCancelEdit}>
+        <IonPage>
+          <IonHeader>
+            <IonToolbar color="primary">
+              <IonButtons slot="start">
+                <IonButton fill="clear" color="light" onClick={handleCancelEdit}>
+                  <IonIcon icon={closeOutline} />
+                </IonButton>
+              </IonButtons>
+              <IonTitle><span className="toolbar-logo">Modifier le profil</span></IonTitle>
+              <IonButtons slot="end">
+                <IonButton fill="clear" color="light" onClick={handleSave}>
+                  <IonIcon icon={checkmarkOutline} />
+                </IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
+
+          <IonContent>
+            <div className="profile-edit-form">
+              <div className="profile-edit-avatar-row">
+                <IonAvatar className="profile-edit-avatar">
+                  <img src={user.avatar} alt={user.username} />
+                </IonAvatar>
+              </div>
+
+              <div className="profile-edit-field">
+                <label className="profile-edit-label">Nom d'utilisateur</label>
+                <input
+                  className="profile-edit-input"
+                  placeholder="Nom d'utilisateur"
+                  value={username}
+                  maxLength={30}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+
+              <div className="profile-edit-field">
+                <label className="profile-edit-label">Bio</label>
+                <textarea
+                  className="profile-edit-input profile-edit-textarea"
+                  placeholder="Parle de toi..."
+                  value={bio}
+                  maxLength={150}
+                  rows={3}
+                  onChange={(e) => setBio(e.target.value)}
+                />
+              </div>
+
+              <div className="profile-edit-field">
+                <label className="profile-edit-label">Ville</label>
+                <select
+                  className="profile-edit-input profile-edit-select"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                >
+                  {VILLES.map((v) => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
+              </div>
+
+              <IonButton expand="block" onClick={handleSave} style={{ marginTop: '8px' }}>
+                Sauvegarder les modifications
+              </IonButton>
+
+            </div>
+          </IonContent>
+        </IonPage>
+      </IonModal>
+
+
+      <IonToast
+        isOpen={!!toastMsg}
+        message={toastMsg}
+        duration={2000}
+        onDidDismiss={() => setToastMsg('')}
+        position="bottom"
+      />
     </IonPage>
   );
 };

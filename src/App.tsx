@@ -4,6 +4,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Tabs from './pages/Tabs';
+import { initTheme } from './theme/theme';
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
@@ -15,10 +16,11 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-import '@ionic/react/css/palettes/dark.system.css';
+import '@ionic/react/css/palettes/dark.class.css';
 import './theme/variables.css';
 
 setupIonicReact();
+initTheme();
 
 const App: React.FC = () => {
   const isLoggedIn = !!localStorage.getItem('currentUserId');

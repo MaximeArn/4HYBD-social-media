@@ -16,6 +16,9 @@ import NewGroup from './NewGroup';
 import Friends from './Friends';
 import Profile from './Profile';
 import UserProfile from './UserProfile';
+import Settings from './Settings';
+import GroupSettings from './GroupSettings';
+import EditGroup from './EditGroup';
 
 const Tabs: React.FC = () => {
   return (
@@ -29,6 +32,9 @@ const Tabs: React.FC = () => {
         <Route exact path="/tabs/friends" component={Friends} />
         <Route exact path="/tabs/user/:id" component={UserProfile} />
         <Route exact path="/tabs/profile" component={Profile} />
+        <Route exact path="/tabs/settings" component={Settings} />
+        <Route exact path="/tabs/group-settings/:id" component={GroupSettings} />
+        <Route exact path="/tabs/edit-group/:id" component={EditGroup} />
         <Route exact path="/tabs">
           <Redirect to="/tabs/home" />
         </Route>

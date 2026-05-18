@@ -1,0 +1,32 @@
+.settings-section {
+  padding: 24px 0 0;
+}
+
+.settings-section-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ion-color-medium);
+  padding: 0 16px 8px;
+  margin: 0;
+}
+
+.settings-list {
+  border-top: 1px solid var(--ion-border-color, #eee);
+  border-bottom: 1px solid var(--ion-border-color, #eee);
+}
+
+.settings-icon {
+  font-size: 1.2rem;
+}
+
+.settings-chevron {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+.settings-value {
+  font-size: 0.88rem;
+  color: var(--ion-color-medium);
+}

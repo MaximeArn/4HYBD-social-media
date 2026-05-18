@@ -12,20 +12,21 @@ import {
   IonNote,
 } from '@ionic/react';
 import AppHeader from '../components/AppHeader';
-
-import { useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
+  getGroup,
   getUserById,
-  createGroup,
+  editGroup,
   type User,
 } from '../services/fakeApi';
 import './Profile.css';
 
-const NewGroup: React.FC = () => {
+const EditGroup: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [groupName, setGroupName] = useState('');
   const [description, setDescription] = useState('');
-  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [friends, setFriends] = useState<User[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [error, setError] = useState('');
   const history = useHistory();
@@ -33,41 +34,51 @@ const NewGroup: React.FC = () => {
 
   useEffect(() => {
     if (!currentUser) return;
-    const friends = currentUser.friends
-      .map((id) => getUserById(id))
+    const group = getGroup(id);
+    if (!group) return;
+
+    setGroupName(group.name);
+    setDescription(group.description || '');
+
+    const currentMembers = group.members.filter((mid) => mid !== currentUser.id);
+    setSelectedIds(currentMembers);
+
+    const allIds = new Set([...currentUser.friends, ...currentMembers]);
+    const allUsers = Array.from(allIds)
+      .map((uid) => getUserById(uid))
       .filter((u): u is User => !!u);
-    setAllUsers(friends);
-  }, []);
+    setFriends(allUsers);
+  }, [id]);
 
   function toggleUser(userId: string) {
-    if (selectedIds.includes(userId)) {
-      setSelectedIds(selectedIds.filter((id) => id !== userId));
-    } else {
-      setSelectedIds([...selectedIds, userId]);
-    }
+    setSelectedIds((prev) =>
+      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]
+    );
   }
 
-  function handleCreate() {
+  function handleSave() {
     setError('');
     if (!groupName.trim()) {
-      setError('Donne un nom au groupe.');
-      return;
-    }
-    if (selectedIds.length === 0) {
-      setError('Sélectionne au moins un membre.');
+      setError('Le nom du groupe est requis.');
       return;
     }
     if (!currentUser) return;
 
-    const newGroup = createGroup({ name: groupName.trim(), description: description.trim(), memberIds: selectedIds, createdBy: currentUser.id });
-    history.replace(`/tabs/group-chat/${newGroup.id}`);
+    editGroup({
+      groupId: id,
+      name: groupName.trim(),
+      description: description.trim(),
+      memberIds: [currentUser.id, ...selectedIds],
+    });
+
+    history.goBack();
   }
 
   if (!currentUser) return null;
 
   return (
     <IonPage>
-      <AppHeader title="Nouveau groupe" showBack />
+      <AppHeader title="Modifier le groupe" showBack />
 
       <IonContent>
         <div style={{ padding: '16px 16px 8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -90,38 +101,38 @@ const NewGroup: React.FC = () => {
 
         {error && (
           <IonText color="danger">
-            <p style={{ padding: '8px 16px' }}>{error}</p>
+            <p style={{ padding: '0 16px' }}>{error}</p>
           </IonText>
         )}
 
         <div style={{ padding: '16px 16px 4px' }}>
           <IonNote>
-            Sélectionner les membres ({selectedIds.length} sélectionné(s))
+            Membres ({selectedIds.length + 1} sélectionné(s) dont vous)
           </IonNote>
         </div>
 
         <IonList>
-          {allUsers.map((user) => (
-            <IonItem key={user.id} button onClick={() => toggleUser(user.id)}>
+          {friends.map((friend) => (
+            <IonItem key={friend.id} button onClick={() => toggleUser(friend.id)}>
               <IonAvatar slot="start">
-                <img src={user.avatar} alt={user.username} />
+                <img src={friend.avatar} alt={friend.username} />
               </IonAvatar>
               <IonLabel>
-                <h2>{user.username}</h2>
-                <p>{user.location.city}</p>
+                <h2>{friend.username}</h2>
+                <p>{friend.location.city}</p>
               </IonLabel>
               <IonCheckbox
                 slot="end"
-                checked={selectedIds.includes(user.id)}
-                onIonChange={() => toggleUser(user.id)}
+                checked={selectedIds.includes(friend.id)}
+                onIonChange={() => toggleUser(friend.id)}
               />
             </IonItem>
           ))}
         </IonList>
 
         <div style={{ padding: '16px' }}>
-          <IonButton expand="block" onClick={handleCreate}>
-            Créer le groupe
+          <IonButton expand="block" onClick={handleSave}>
+            Enregistrer
           </IonButton>
         </div>
       </IonContent>
@@ -129,4 +140,4 @@ const NewGroup: React.FC = () => {
   );
 };
 
-export default NewGroup;
+export default EditGroup;

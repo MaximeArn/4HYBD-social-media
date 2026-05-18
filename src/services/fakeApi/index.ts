@@ -19,8 +19,9 @@ export {
   getGroups,
   getGroup,
   createGroup,
+  editGroup,
   sendGroupMessage,
   leaveGroup,
 } from "./groups";
-export { getStoriesNearby, createStory } from "./stories";
+export { getStoriesNearby, createStory, getStoriesByUser } from "./stories";
 export { formatTime, formatDistance } from "./utils";

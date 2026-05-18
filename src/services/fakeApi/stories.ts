@@ -38,6 +38,12 @@ export function getStoriesNearby({
     .sort((a, b) => a.distance - b.distance);
 }
 
+export function getStoriesByUser(userId: string): Story[] {
+  return db.stories
+    .filter((s) => s.userId === userId)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+}
+
 export function createStory({
   userId,
   caption,

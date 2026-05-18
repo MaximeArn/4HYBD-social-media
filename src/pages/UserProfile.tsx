@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react';
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonButton,
   IonIcon,
-  IonButtons,
-  IonBackButton,
   IonCard,
   IonCardContent,
   IonList,
@@ -16,7 +11,9 @@ import {
   IonLabel,
   IonText,
   IonToast,
+  IonAlert,
 } from '@ionic/react';
+import AppHeader from '../components/AppHeader';
 import { personAddOutline, personRemoveOutline, chatbubbleOutline } from 'ionicons/icons';
 import { useParams, useHistory } from 'react-router-dom';
 import {
@@ -34,6 +31,7 @@ const UserProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [profileUser, setProfileUser] = useState<User | null>(null);
   const [isFriend, setIsFriend] = useState(false);
+  const [showRemoveAlert, setShowRemoveAlert] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const history = useHistory();
   const currentUser = getCurrentUser();
@@ -60,6 +58,10 @@ const UserProfile: React.FC = () => {
   }
 
   function handleRemoveFriend() {
+    setShowRemoveAlert(true);
+  }
+
+  function confirmRemoveFriend() {
     if (!currentUser || !profileUser) return;
     removeFriend({ userId: currentUser.id, friendId: profileUser.id });
     setIsFriend(false);
@@ -76,14 +78,7 @@ const UserProfile: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonButtons slot="start">
-            <IonBackButton />
-          </IonButtons>
-          <IonTitle>{profileUser.username}</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <AppHeader title={profileUser.username} showBack />
 
       <IonContent>
         <ProfileHeader user={profileUser} />
@@ -137,6 +132,17 @@ const UserProfile: React.FC = () => {
           duration={2000}
           onDidDismiss={() => setToastMsg('')}
           position="bottom"
+        />
+
+        <IonAlert
+          isOpen={showRemoveAlert}
+          onDidDismiss={() => setShowRemoveAlert(false)}
+          header="Retirer un ami"
+          message={`Veux-tu vraiment retirer ${profileUser?.username} de tes amis ?`}
+          buttons={[
+            { text: 'Annuler', role: 'cancel' },
+            { text: 'Retirer', role: 'destructive', handler: confirmRemoveFriend },
+          ]}
         />
       </IonContent>
     </IonPage>

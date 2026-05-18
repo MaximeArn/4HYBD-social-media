@@ -1,6 +1,7 @@
 import type { Group, Message } from "./types/entities";
 import type {
   CreateGroupDto,
+  EditGroupDto,
   SendGroupMessageDto,
   LeaveGroupDto,
 } from "./types/dto";
@@ -79,4 +80,15 @@ export function leaveGroup({ groupId, userId }: LeaveGroupDto): void {
   if (group) {
     group.members = group.members.filter((id) => id !== userId);
   }
+}
+
+export function editGroup({ groupId, name, description, memberIds }: EditGroupDto): Group | null {
+  const group = db.groups.find((g) => g.id === groupId);
+  if (!group) return null;
+  group.name = name;
+  group.description = description;
+  group.members = memberIds.includes(group.createdBy)
+    ? memberIds
+    : [group.createdBy, ...memberIds];
+  return group;
 }

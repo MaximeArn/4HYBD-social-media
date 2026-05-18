@@ -58,6 +58,13 @@ export interface LeaveGroupDto {
   userId: string;
 }
 
+export interface EditGroupDto {
+  groupId: string;
+  name: string;
+  description: string;
+  memberIds: string[];
+}
+
 export interface GetStoriesNearbyDto {
   lat: number;
   lng: number;

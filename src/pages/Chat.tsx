@@ -1,17 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonAvatar,
-  IonButtons,
-  IonButton,
-  IonIcon,
 } from '@ionic/react';
-import { arrowBack } from 'ionicons/icons';
+import AppHeader from '../components/AppHeader';
 import { useParams, useHistory } from 'react-router-dom';
+
 import {
   getCurrentUser,
   getConversation,
@@ -77,19 +71,7 @@ const Chat: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonButtons slot="start">
-            <IonButton fill="clear" color="light" onClick={() => history.goBack()}>
-              <IonIcon icon={arrowBack} />
-            </IonButton>
-          </IonButtons>
-          <IonAvatar slot="start" style={{ width: '36px', height: '36px', margin: '0 8px' }}>
-            <img src={otherUser.avatar} alt={otherUser.username} />
-          </IonAvatar>
-          <IonTitle>{otherUser.username}</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <AppHeader title={otherUser.username} showBack />
 
       <IonContent ref={contentRef} className="chat-content">
         <div className="messages-container">
@@ -106,6 +88,8 @@ const Chat: React.FC = () => {
                 message={msg}
                 isMe={isMe}
                 sender={isMe ? undefined : otherUser}
+                me={isMe ? currentUser : undefined}
+                onAvatarClick={(userId) => history.push(userId === currentUser.id ? '/tabs/profile' : `/tabs/user/${userId}`)}
               />
             );
           })}

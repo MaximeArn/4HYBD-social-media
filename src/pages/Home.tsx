@@ -16,6 +16,7 @@ import {
   IonSpinner,
   IonAvatar,
 } from '@ionic/react';
+import AppHeader from '../components/AppHeader';
 import { add, locationOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import {
@@ -98,11 +99,7 @@ const Home: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonTitle>Snapshoot</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <AppHeader />
 
       <IonContent>
         <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
@@ -146,10 +143,8 @@ const Home: React.FC = () => {
             <IonPage>
               <IonHeader>
                 <IonToolbar color="primary">
-                  <IonTitle>{selectedStory.user.username}</IonTitle>
-                  <IonButton slot="end" fill="clear" color="light" onClick={() => setSelectedStory(null)}>
-                    Fermer
-                  </IonButton>
+                  <IonTitle><span className="toolbar-logo">{selectedStory.user.username}</span></IonTitle>
+                  <IonButton slot="end" fill="clear" color="light" onClick={() => setSelectedStory(null)}>Fermer</IonButton>
                 </IonToolbar>
               </IonHeader>
               <IonContent scrollY={false}>
@@ -186,10 +181,8 @@ const Home: React.FC = () => {
           <IonPage>
             <IonHeader>
               <IonToolbar color="primary">
-                <IonTitle>Nouvelle story</IonTitle>
-                <IonButton slot="end" fill="clear" color="light" onClick={() => setShowNewStory(false)}>
-                  Annuler
-                </IonButton>
+                <IonTitle><span className="toolbar-logo">Nouvelle story</span></IonTitle>
+                <IonButton slot="end" fill="clear" color="light" onClick={() => setShowNewStory(false)}>Annuler</IonButton>
               </IonToolbar>
             </IonHeader>
             <IonContent>

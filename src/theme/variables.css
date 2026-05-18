@@ -1,3 +1,10 @@
+.toolbar-logo {
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.3px;
+}
+
 :root {
   --ion-color-primary: #0d9488;
   --ion-color-primary-rgb: 13, 148, 136;

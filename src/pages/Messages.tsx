@@ -18,7 +18,9 @@ import {
   IonSearchbar,
   IonButton,
   IonButtons,
+  useIonViewWillEnter,
 } from '@ionic/react';
+import AppHeader from '../components/AppHeader';
 import { add } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import {
@@ -26,7 +28,7 @@ import {
   getConversations,
   getGroups,
   getOrCreateConversation,
-  searchUsers,
+  getUserById,
   type User,
 } from '../services/fakeApi';
 import ConversationItem from '../components/ConversationItem';
@@ -44,24 +46,39 @@ const Messages: React.FC = () => {
   const currentUser = getCurrentUser();
 
   useEffect(() => {
-    if (!currentUser) return;
-    setConversations(getConversations(currentUser.id));
-    setGroups(getGroups(currentUser.id));
+    refreshData();
   }, []);
 
+  useIonViewWillEnter(() => {
+    refreshData();
+  });
+
   useEffect(() => {
-    if (!showNewChat) {
+    if (showNewChat) {
+      setSearchResults(getFriends());
+    } else {
       setSearchQuery('');
       setSearchResults([]);
     }
   }, [showNewChat]);
 
+  function getFriends(): User[] {
+    if (!currentUser) return [];
+    return currentUser.friends
+      .map((id) => getUserById(id))
+      .filter((u): u is User => !!u);
+  }
+
   function handleSearch(query: string) {
     setSearchQuery(query);
+    const friends = getFriends();
     if (query.trim()) {
-      setSearchResults(searchUsers(query));
+      const q = query.toLowerCase();
+      setSearchResults(friends.filter((u) =>
+        u.username.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+      ));
     } else {
-      setSearchResults([]);
+      setSearchResults(friends);
     }
   }
 
@@ -82,10 +99,8 @@ const Messages: React.FC = () => {
 
   return (
     <IonPage>
+      <AppHeader />
       <IonHeader>
-        <IonToolbar color="primary">
-          <IonTitle>Messages</IonTitle>
-        </IonToolbar>
         <IonToolbar>
           <IonSegment value={segment} onIonChange={(e) => { setSegment(e.detail.value as any); refreshData(); }}>
             <IonSegmentButton value="direct">
@@ -158,7 +173,7 @@ const Messages: React.FC = () => {
         <IonModal isOpen={showNewChat} onDidDismiss={() => setShowNewChat(false)}>
           <IonHeader>
             <IonToolbar color="primary">
-              <IonTitle>Nouvelle conversation</IonTitle>
+              <IonTitle><span className="toolbar-logo">Snapshoot</span></IonTitle>
               <IonButtons slot="end">
                 <IonButton fill="clear" color="light" onClick={() => setShowNewChat(false)}>
                   Annuler

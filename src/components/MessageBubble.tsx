@@ -1,22 +1,31 @@
-import { IonAvatar, IonText } from '@ionic/react';
+import { IonAvatar } from '@ionic/react';
 import { formatTime, type Message, type User } from '../services/fakeApi';
 
 interface Props {
   message: Message;
   isMe: boolean;
   sender?: User;
+  me?: User;
   showSenderName?: boolean;
+  onAvatarClick?: (userId: string) => void;
 }
 
-const MessageBubble: React.FC<Props> = ({ message, isMe, sender, showSenderName = false }) => {
+const MessageBubble: React.FC<Props> = ({ message, isMe, sender, me, showSenderName = false, onAvatarClick }) => {
+  const avatarUser = isMe ? me : sender;
+
   return (
-    <div className={`message-bubble-wrapper ${isMe ? 'me' : 'them'}`}>
-      {!isMe && sender && (
-        <IonAvatar className="bubble-avatar">
-          <img src={sender.avatar} alt={sender.username} />
+    <div className={`message-row ${isMe ? 'row-me' : 'row-them'}`}>
+      {avatarUser && (
+        <IonAvatar
+          className="bubble-avatar"
+          onClick={() => onAvatarClick?.(avatarUser.id)}
+          style={onAvatarClick ? { cursor: 'pointer' } : undefined}
+        >
+          <img src={avatarUser.avatar} alt={avatarUser.username} />
         </IonAvatar>
       )}
-      <div>
+
+      <div className="bubble-col">
         {!isMe && sender && showSenderName && (
           <p className="sender-name">{sender.username}</p>
         )}
@@ -24,11 +33,11 @@ const MessageBubble: React.FC<Props> = ({ message, isMe, sender, showSenderName 
           {message.type === 'image' && message.imageUrl ? (
             <img src={message.imageUrl} alt="photo" className="message-image" />
           ) : (
-            <p>{message.content}</p>
+            <p className="bubble-text">{message.content}</p>
           )}
-          <IonText color="medium">
-            <span className="message-time-small">{formatTime(message.timestamp)}</span>
-          </IonText>
+          <div className="bubble-footer">
+            <span className="message-time">{formatTime(message.timestamp)}</span>
+          </div>
         </div>
       </div>
     </div>

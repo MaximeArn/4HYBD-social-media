@@ -4,21 +4,18 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
+  IonButtons,
   IonContent,
   IonButton,
   IonIcon,
-  IonButtons,
-  IonAlert,
-  IonActionSheet,
 } from '@ionic/react';
-import { ellipsisVertical, exitOutline, informationCircleOutline, arrowBack } from 'ionicons/icons';
+import { ellipsisVertical, arrowBack } from 'ionicons/icons';
 import { useParams, useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
   getGroup,
   sendGroupMessage,
   getUserById,
-  leaveGroup,
   type Message,
   type Group,
 } from '../services/fakeApi';
@@ -31,8 +28,6 @@ const GroupChat: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [group, setGroup] = useState<Group | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [showActionSheet, setShowActionSheet] = useState(false);
-  const [showLeaveAlert, setShowLeaveAlert] = useState(false);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const history = useHistory();
   const currentUser = getCurrentUser();
@@ -70,12 +65,6 @@ const GroupChat: React.FC = () => {
     e.target.value = '';
   }
 
-  function handleLeaveGroup() {
-    if (!currentUser || !group) return;
-    leaveGroup({ groupId: group.id, userId: currentUser.id });
-    history.replace('/tabs/messages');
-  }
-
   if (!currentUser || !group) return null;
 
   return (
@@ -87,14 +76,9 @@ const GroupChat: React.FC = () => {
               <IonIcon icon={arrowBack} />
             </IonButton>
           </IonButtons>
-          <IonTitle>
-            <div className="group-title">
-              <span>{group.name}</span>
-              <small>{group.members.length} membres</small>
-            </div>
-          </IonTitle>
+          <IonTitle><span className="toolbar-logo">{group.name}</span></IonTitle>
           <IonButtons slot="end">
-            <IonButton fill="clear" color="light" onClick={() => setShowActionSheet(true)}>
+            <IonButton fill="clear" color="light" onClick={() => history.push(`/tabs/group-settings/${group.id}`)}>
               <IonIcon icon={ellipsisVertical} />
             </IonButton>
           </IonButtons>
@@ -117,7 +101,9 @@ const GroupChat: React.FC = () => {
                 message={msg}
                 isMe={isMe}
                 sender={isMe ? undefined : sender}
+                me={isMe ? currentUser : undefined}
                 showSenderName
+                onAvatarClick={(userId) => history.push(userId === currentUser.id ? '/tabs/profile' : `/tabs/user/${userId}`)}
               />
             );
           })}
@@ -125,45 +111,6 @@ const GroupChat: React.FC = () => {
       </IonContent>
 
       <ChatInputBar onSend={handleSendText} onImageSend={handleImageSend} />
-
-      <IonActionSheet
-        isOpen={showActionSheet}
-        onDidDismiss={() => setShowActionSheet(false)}
-        header={group.name}
-        buttons={[
-          {
-            text: `Membres (${group.members.length})`,
-            icon: informationCircleOutline,
-            handler: () => {
-              const memberNames = group.members
-                .map((mid) => getUserById(mid)?.username || mid)
-                .join(', ');
-              alert('Membres : ' + memberNames);
-            },
-          },
-          {
-            text: 'Quitter le groupe',
-            icon: exitOutline,
-            role: 'destructive',
-            handler: () => setShowLeaveAlert(true),
-          },
-          {
-            text: 'Annuler',
-            role: 'cancel',
-          },
-        ]}
-      />
-
-      <IonAlert
-        isOpen={showLeaveAlert}
-        onDidDismiss={() => setShowLeaveAlert(false)}
-        header="Quitter le groupe"
-        message={`Tu vas quitter "${group.name}". Es-tu sûr ?`}
-        buttons={[
-          { text: 'Annuler', role: 'cancel' },
-          { text: 'Quitter', role: 'destructive', handler: handleLeaveGroup },
-        ]}
-      />
     </IonPage>
   );
 };
