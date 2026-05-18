@@ -5,20 +5,10 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonTextarea,
   IonButton,
   IonIcon,
   IonAlert,
   IonToast,
-  IonSelect,
-  IonSelectOption,
-  IonText,
-  IonCard,
-  IonCardContent,
 } from '@ionic/react';
 import { logOutOutline, trashOutline, createOutline, checkmarkOutline, closeOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
@@ -135,99 +125,66 @@ const Profile: React.FC = () => {
       </IonHeader>
 
       <IonContent>
-        <ProfileHeader user={user} editing={editing} />
+        <div className="profile-wrapper">
+          <ProfileHeader
+            user={user}
+            editing={editing}
+            friendsCount={!editing ? user.friends.length : undefined}
+          />
 
-        {editing && (
-          <IonCard className="edit-card">
-            <IonCardContent>
-              <IonList>
-                <IonItem>
-                  <IonLabel position="floating">Nom d'utilisateur</IonLabel>
-                  <IonInput
-                    value={username}
-                    onIonInput={(e) => setUsername(e.detail.value!)}
-                    maxlength={30}
-                  />
-                </IonItem>
-                <IonItem>
-                  <IonLabel position="floating">Bio</IonLabel>
-                  <IonTextarea
-                    value={bio}
-                    onIonInput={(e) => setBio(e.detail.value!)}
-                    rows={2}
-                    maxlength={150}
-                  />
-                </IonItem>
-                <IonItem>
-                  <IonLabel>Ville</IonLabel>
-                  <IonSelect value={city} onIonChange={(e) => setCity(e.detail.value)}>
-                    {VILLES.map((v) => (
-                      <IonSelectOption key={v} value={v}>
-                        {v}
-                      </IonSelectOption>
-                    ))}
-                  </IonSelect>
-                </IonItem>
-              </IonList>
-              <IonButton expand="block" onClick={handleSave} style={{ marginTop: '12px' }}>
+          {editing ? (
+            <div className="profile-edit-form">
+              <input
+                placeholder="Nom d'utilisateur"
+                value={username}
+                maxLength={30}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <textarea
+                placeholder="Bio"
+                value={bio}
+                maxLength={150}
+                rows={3}
+                onChange={(e) => setBio(e.target.value)}
+              />
+              <select value={city} onChange={(e) => setCity(e.target.value)}>
+                {VILLES.map((v) => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
+              <IonButton expand="block" onClick={handleSave}>
                 Sauvegarder
               </IonButton>
-            </IonCardContent>
-          </IonCard>
-        )}
+            </div>
+          ) : (
+            <div className="profile-info-section">
+              <div className="profile-info-card">
+                <div className="profile-info-row">
+                  <span className="profile-info-label">Email</span>
+                  <span className="profile-info-value">{user.email}</span>
+                </div>
+                <div className="profile-info-row">
+                  <span className="profile-info-label">Ville</span>
+                  <span className="profile-info-value">{user.location.city}</span>
+                </div>
+                <div className="profile-info-row">
+                  <span className="profile-info-label">ID</span>
+                  <span className="profile-info-value" style={{ fontSize: '0.75rem', color: '#aaa' }}>{user.id}</span>
+                </div>
+              </div>
+            </div>
+          )}
 
-        {!editing && (
-          <IonCard>
-            <IonCardContent>
-              <IonList lines="none">
-                <IonItem>
-                  <IonLabel>
-                    <IonText color="medium"><small>Email</small></IonText>
-                    <p>{user.email}</p>
-                  </IonLabel>
-                </IonItem>
-                <IonItem>
-                  <IonLabel>
-                    <IonText color="medium"><small>Localisation</small></IonText>
-                    <p>{user.location.city} ({user.location.lat.toFixed(4)}, {user.location.lng.toFixed(4)})</p>
-                  </IonLabel>
-                </IonItem>
-                <IonItem>
-                  <IonLabel>
-                    <IonText color="medium"><small>Amis</small></IonText>
-                    <p>{user.friends.length} ami(s)</p>
-                  </IonLabel>
-                </IonItem>
-                <IonItem>
-                  <IonLabel>
-                    <IonText color="medium"><small>ID utilisateur</small></IonText>
-                    <p style={{ fontSize: '0.8rem', color: 'gray' }}>{user.id}</p>
-                  </IonLabel>
-                </IonItem>
-              </IonList>
-            </IonCardContent>
-          </IonCard>
-        )}
-
-        <div className="profile-actions">
-          <IonButton
-            expand="block"
-            fill="outline"
-            color="medium"
-            onClick={() => setShowLogoutAlert(true)}
-          >
-            <IonIcon icon={logOutOutline} slot="start" />
-            Se déconnecter
-          </IonButton>
-          <IonButton
-            expand="block"
-            fill="outline"
-            color="danger"
-            onClick={() => setShowDeleteAlert(true)}
-          >
-            <IonIcon icon={trashOutline} slot="start" />
-            Supprimer mon compte
-          </IonButton>
+          <div className="profile-actions">
+            <IonButton expand="block" fill="outline" color="medium" onClick={() => setShowLogoutAlert(true)}>
+              <IonIcon icon={logOutOutline} slot="start" />
+              Se déconnecter
+            </IonButton>
+            <IonButton expand="block" fill="outline" color="danger" onClick={() => setShowDeleteAlert(true)}>
+              <IonIcon icon={trashOutline} slot="start" />
+              Supprimer mon compte
+            </IonButton>
+          </div>
         </div>
 
         <IonAlert

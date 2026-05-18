@@ -8,11 +8,10 @@ import {
   IonButton,
   IonIcon,
   IonButtons,
-  IonBackButton,
   IonAlert,
   IonActionSheet,
 } from '@ionic/react';
-import { ellipsisVertical, exitOutline, informationCircleOutline } from 'ionicons/icons';
+import { ellipsisVertical, exitOutline, informationCircleOutline, arrowBack } from 'ionicons/icons';
 import { useParams, useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
@@ -84,7 +83,9 @@ const GroupChat: React.FC = () => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/tabs/messages" />
+            <IonButton fill="clear" color="light" onClick={() => history.goBack()}>
+              <IonIcon icon={arrowBack} />
+            </IonButton>
           </IonButtons>
           <IonTitle>
             <div className="group-title">

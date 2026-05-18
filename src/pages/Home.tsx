@@ -10,7 +10,6 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
-  IonTextarea,
   IonButton,
   IonModal,
   IonText,
@@ -18,6 +17,7 @@ import {
   IonAvatar,
 } from '@ionic/react';
 import { add, locationOutline } from 'ionicons/icons';
+import { useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
   getStoriesNearby,
@@ -41,6 +41,7 @@ const Home: React.FC = () => {
   const [selectedStory, setSelectedStory] = useState<StoryWithUser | null>(null);
 
   const currentUser = getCurrentUser();
+  const history = useHistory();
 
   function loadStories() {
     if (!currentUser) return;
@@ -108,28 +109,30 @@ const Home: React.FC = () => {
           <IonRefresherContent />
         </IonRefresher>
 
-        <div className="home-location-bar">
-          <IonIcon icon={locationOutline} />
-          <span>Autour de {currentUser.location.city} — {stories.length} story(s)</span>
-        </div>
+        <div className="home-wrapper">
+          <div className="home-location-bar">
+            <IonIcon icon={locationOutline} />
+            <span>Autour de {currentUser.location.city} — {stories.length} story(s)</span>
+          </div>
 
-        {loading ? (
-          <div className="home-loading">
-            <IonSpinner name="crescent" />
-            <p>Recherche des stories proches...</p>
-          </div>
-        ) : stories.length === 0 ? (
-          <div className="home-empty">
-            <p>Aucune story dans ta zone.</p>
-            <p>Sois le premier à publier !</p>
-          </div>
-        ) : (
-          <div className="stories-list">
-            {stories.map((story) => (
-              <StoryCard key={story.id} story={story} onClick={setSelectedStory} />
-            ))}
-          </div>
-        )}
+          {loading ? (
+            <div className="home-loading">
+              <IonSpinner name="crescent" />
+              <p>Recherche des stories proches...</p>
+            </div>
+          ) : stories.length === 0 ? (
+            <div className="home-empty">
+              <p>Aucune story dans ta zone.</p>
+              <p>Sois le premier à publier !</p>
+            </div>
+          ) : (
+            <div className="stories-grid">
+              {stories.map((story) => (
+                <StoryCard key={story.id} story={story} onClick={setSelectedStory} />
+              ))}
+            </div>
+          )}
+        </div>
 
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton onClick={() => setShowNewStory(true)}>
@@ -137,6 +140,7 @@ const Home: React.FC = () => {
           </IonFabButton>
         </IonFab>
 
+        {/* Story detail */}
         <IonModal isOpen={!!selectedStory} onDidDismiss={() => setSelectedStory(null)}>
           {selectedStory && (
             <IonPage>
@@ -148,30 +152,36 @@ const Home: React.FC = () => {
                   </IonButton>
                 </IonToolbar>
               </IonHeader>
-              <IonContent>
-                <img src={selectedStory.imageUrl} alt="story" style={{ width: '100%' }} />
-                <div style={{ padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                    <IonAvatar style={{ width: '48px', height: '48px' }}>
-                      <img src={selectedStory.user.avatar} alt={selectedStory.user.username} />
-                    </IonAvatar>
-                    <div>
-                      <strong>{selectedStory.user.username}</strong>
-                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'gray' }}>
-                        {selectedStory.location.city} — {formatDistance(selectedStory.distance)}
-                      </p>
-                    </div>
+              <IonContent scrollY={false}>
+                <div className="story-viewer">
+                  <div className="story-viewer-image">
+                    <img src={selectedStory.imageUrl} alt="story" />
                   </div>
-                  <p style={{ fontSize: '1rem' }}>{selectedStory.caption}</p>
-                  <IonText color="medium">
-                    <small>{formatTime(selectedStory.createdAt)}</small>
-                  </IonText>
+                  <div className="story-viewer-info">
+                    <div
+                      className="story-viewer-author"
+                      onClick={() => { setSelectedStory(null); history.push(`/tabs/user/${selectedStory.user.id}`); }}
+                    >
+                      <IonAvatar className="story-viewer-avatar">
+                        <img src={selectedStory.user.avatar} alt={selectedStory.user.username} />
+                      </IonAvatar>
+                      <div>
+                        <strong>{selectedStory.user.username}</strong>
+                        <p>{selectedStory.location.city} — {formatDistance(selectedStory.distance)}</p>
+                      </div>
+                    </div>
+                    <p className="story-viewer-caption">{selectedStory.caption}</p>
+                    <IonText color="medium">
+                      <small>{formatTime(selectedStory.createdAt)}</small>
+                    </IonText>
+                  </div>
                 </div>
               </IonContent>
             </IonPage>
           )}
         </IonModal>
 
+        {/* New story */}
         <IonModal isOpen={showNewStory} onDidDismiss={() => setShowNewStory(false)}>
           <IonPage>
             <IonHeader>
@@ -183,7 +193,7 @@ const Home: React.FC = () => {
               </IonToolbar>
             </IonHeader>
             <IonContent>
-              <div style={{ padding: '16px' }}>
+              <div className="new-story-wrapper">
                 <div className="new-story-image-picker">
                   {newImage ? (
                     <img src={newImage} alt="preview" style={{ width: '100%', borderRadius: '12px', maxHeight: '300px', objectFit: 'cover' }} />
@@ -198,15 +208,15 @@ const Home: React.FC = () => {
                   </label>
                 </div>
 
-                <IonTextarea
+                <textarea
+                  className="new-story-textarea"
                   placeholder="Dis quelque chose..."
                   value={newCaption}
-                  onIonInput={(e) => setNewCaption(e.detail.value!)}
                   rows={3}
-                  style={{ marginTop: '16px' }}
+                  onChange={(e) => setNewCaption(e.target.value)}
                 />
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', color: 'gray', fontSize: '0.85rem' }}>
+                <div className="new-story-location">
                   <IonIcon icon={locationOutline} />
                   <span>Publié depuis {currentUser.location.city}</span>
                 </div>

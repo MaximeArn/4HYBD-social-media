@@ -7,9 +7,11 @@ import {
   IonContent,
   IonAvatar,
   IonButtons,
-  IonBackButton,
+  IonButton,
+  IonIcon,
 } from '@ionic/react';
-import { useParams } from 'react-router-dom';
+import { arrowBack } from 'ionicons/icons';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
   getConversation,
@@ -30,6 +32,7 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const currentUser = getCurrentUser();
+  const history = useHistory();
 
   useEffect(() => {
     loadConversation(); // eslint-disable-line react-hooks/exhaustive-deps
@@ -77,7 +80,9 @@ const Chat: React.FC = () => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/tabs/messages" />
+            <IonButton fill="clear" color="light" onClick={() => history.goBack()}>
+              <IonIcon icon={arrowBack} />
+            </IonButton>
           </IonButtons>
           <IonAvatar slot="start" style={{ width: '36px', height: '36px', margin: '0 8px' }}>
             <img src={otherUser.avatar} alt={otherUser.username} />
