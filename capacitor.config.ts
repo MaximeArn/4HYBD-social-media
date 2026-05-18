@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'be-unreal',
+  appId: 'com.hybd.snapshoot',
+  appName: 'snaphshoot',
   webDir: 'dist'
 };
 
