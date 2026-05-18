@@ -112,7 +112,7 @@ const Friends: React.FC = () => {
           <>
             {friends.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: 'gray' }}>
-                <p>Tu n'as pas encore d'amis 😢</p>
+                <p>Tu n'as pas encore d'amis.</p>
                 <p>Va dans "Rechercher" pour en trouver !</p>
               </div>
             ) : (
@@ -124,7 +124,7 @@ const Friends: React.FC = () => {
                     </IonAvatar>
                     <IonLabel onClick={() => history.push(`/tabs/user/${friend.id}`)}>
                       <h2>{friend.username}</h2>
-                      <p>📍 {friend.location.city}</p>
+                      <p>{friend.location.city}</p>
                     </IonLabel>
                     <IonButton fill="clear" onClick={() => handleMessage(friend)}>
                       <IonIcon icon={chatbubbleOutline} />
@@ -165,7 +165,7 @@ const Friends: React.FC = () => {
                   </IonAvatar>
                   <IonLabel onClick={() => history.push(`/tabs/user/${user.id}`)}>
                     <h2>{user.username}</h2>
-                    <p>📍 {user.location.city}</p>
+                    <p>{user.location.city}</p>
                     <IonText color="medium">
                       <small>{user.email}</small>
                     </IonText>

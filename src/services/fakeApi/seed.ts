@@ -1,0 +1,366 @@
+import type { User, Conversation, Group, Story } from './types';
+
+function hoursAgo(h: number): string {
+  const d = new Date();
+  d.setHours(d.getHours() - h);
+  return d.toISOString();
+}
+
+function daysAgo(days: number, hour = 12): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  d.setHours(hour, 0, 0, 0);
+  return d.toISOString();
+}
+
+function hoursFromNow(h: number): string {
+  const d = new Date();
+  d.setHours(d.getHours() + h);
+  return d.toISOString();
+}
+
+let nextId = 200;
+export function generateId(): string {
+  return `id_${++nextId}_${Date.now()}`;
+}
+
+export const db: {
+  users: User[];
+  conversations: Conversation[];
+  groups: Group[];
+  stories: Story[];
+} = {
+  users: [
+    {
+      id: "u1",
+      email: "marie@snapshoot.com",
+      password: "password123",
+      username: "Marie Dupont",
+      bio: "Passionnée de photo | Parisienne",
+      avatar: "https://i.pravatar.cc/150?img=1",
+      location: { lat: 48.8566, lng: 2.3522, city: "Paris" },
+      friends: ["u2", "u3"],
+      createdAt: daysAgo(30),
+    },
+    {
+      id: "u2",
+      email: "thomas@snapshoot.com",
+      password: "password123",
+      username: "Thomas Martin",
+      bio: "Musicien | Lyon forever",
+      avatar: "https://i.pravatar.cc/150?img=3",
+      location: { lat: 45.764, lng: 4.8357, city: "Lyon" },
+      friends: ["u1", "u3", "u4"],
+      createdAt: daysAgo(25),
+    },
+    {
+      id: "u3",
+      email: "sophie@snapshoot.com",
+      password: "password123",
+      username: "Sophie Bernard",
+      bio: "La mer c'est la vie | Marseille",
+      avatar: "https://i.pravatar.cc/150?img=5",
+      location: { lat: 43.2965, lng: 5.3698, city: "Marseille" },
+      friends: ["u1", "u2"],
+      createdAt: daysAgo(20),
+    },
+    {
+      id: "u4",
+      email: "lucas@snapshoot.com",
+      password: "password123",
+      username: "Lucas Petit",
+      bio: "Amateur de bons vins | Bordeaux",
+      avatar: "https://i.pravatar.cc/150?img=7",
+      location: { lat: 44.8378, lng: -0.5792, city: "Bordeaux" },
+      friends: ["u2"],
+      createdAt: daysAgo(15),
+    },
+    {
+      id: "u5",
+      email: "emma@snapshoot.com",
+      password: "password123",
+      username: "Emma Rousseau",
+      bio: "Artiste | Toulouse la rose",
+      avatar: "https://i.pravatar.cc/150?img=9",
+      location: { lat: 43.6047, lng: 1.4442, city: "Toulouse" },
+      friends: [],
+      createdAt: daysAgo(10),
+    },
+    {
+      id: "u6",
+      email: "hugo@snapshoot.com",
+      password: "password123",
+      username: "Hugo Moreau",
+      bio: "Fan de foot | Ch'ti fier",
+      avatar: "https://i.pravatar.cc/150?img=12",
+      location: { lat: 50.6292, lng: 3.0573, city: "Lille" },
+      friends: [],
+      createdAt: daysAgo(8),
+    },
+    {
+      id: "u7",
+      email: "camille@snapshoot.com",
+      password: "password123",
+      username: "Camille Simon",
+      bio: "Nature & Voyage | Nantes",
+      avatar: "https://i.pravatar.cc/150?img=20",
+      location: { lat: 47.2184, lng: -1.5536, city: "Nantes" },
+      friends: [],
+      createdAt: daysAgo(5),
+    },
+    {
+      id: "u8",
+      email: "antoine@snapshoot.com",
+      password: "password123",
+      username: "Antoine Lefebvre",
+      bio: "Histoire & Culture | Strasbourg",
+      avatar: "https://i.pravatar.cc/150?img=33",
+      location: { lat: 48.5734, lng: 7.7521, city: "Strasbourg" },
+      friends: [],
+      createdAt: daysAgo(3),
+    },
+  ],
+
+  conversations: [
+    {
+      id: "c1",
+      participants: ["u1", "u2"],
+      messages: [
+        {
+          id: "m1",
+          senderId: "u2",
+          content: "Salut Marie ! Comment tu vas ?",
+          type: "text",
+          timestamp: daysAgo(1, 10),
+        },
+        {
+          id: "m2",
+          senderId: "u1",
+          content: "Super bien merci ! Et toi Thomas ?",
+          type: "text",
+          timestamp: daysAgo(1, 11),
+        },
+        {
+          id: "m3",
+          senderId: "u2",
+          content: "Nickel ! Tu fais quoi ce weekend ?",
+          type: "text",
+          timestamp: daysAgo(1, 14),
+        },
+        {
+          id: "m4",
+          senderId: "u1",
+          content: "Je sais pas encore, peut-être sortir à Paris",
+          type: "text",
+          timestamp: hoursAgo(3),
+        },
+      ],
+    },
+    {
+      id: "c2",
+      participants: ["u1", "u3"],
+      messages: [
+        {
+          id: "m5",
+          senderId: "u3",
+          content: "Hey ! J'ai vu ta story de la Tour Eiffel",
+          type: "text",
+          timestamp: hoursAgo(5),
+        },
+        {
+          id: "m6",
+          senderId: "u1",
+          content: "Oui c'était trop beau ce soir",
+          type: "text",
+          timestamp: hoursAgo(4),
+        },
+        {
+          id: "m7",
+          senderId: "u3",
+          content: "J'adorerais venir à Paris bientôt !",
+          type: "text",
+          timestamp: hoursAgo(2),
+        },
+      ],
+    },
+  ],
+
+  groups: [
+    {
+      id: "g1",
+      name: "Les Potes",
+      description: "Notre groupe de potes adorés !",
+      members: ["u1", "u2", "u3", "u4"],
+      createdBy: "u1",
+      messages: [
+        {
+          id: "gm1",
+          senderId: "u2",
+          content: "Coucou tout le monde !",
+          type: "text",
+          timestamp: daysAgo(1, 9),
+        },
+        {
+          id: "gm2",
+          senderId: "u3",
+          content: "Salut les amis !",
+          type: "text",
+          timestamp: daysAgo(1, 10),
+        },
+        {
+          id: "gm3",
+          senderId: "u4",
+          content: "Yo yo ! Bordeaux represent",
+          type: "text",
+          timestamp: daysAgo(1, 11),
+        },
+        {
+          id: "gm4",
+          senderId: "u1",
+          content: "On se fait un trip ce weekend ?",
+          type: "text",
+          timestamp: hoursAgo(6),
+        },
+        {
+          id: "gm5",
+          senderId: "u2",
+          content: "Bonne idée ! Lyon ou Paris ?",
+          type: "text",
+          timestamp: hoursAgo(5),
+        },
+        {
+          id: "gm6",
+          senderId: "u3",
+          content: "Paris c'est loin de Marseille mais je suis partant !",
+          type: "text",
+          timestamp: hoursAgo(4),
+        },
+      ],
+      createdAt: daysAgo(7),
+    },
+    {
+      id: "g2",
+      name: "Projet Supinfo",
+      description: "Groupe pour organiser notre projet scolaire",
+      members: ["u1", "u2", "u6"],
+      createdBy: "u1",
+      messages: [
+        {
+          id: "gm7",
+          senderId: "u1",
+          content: "Bonjour à tous ! Voici notre groupe de projet",
+          type: "text",
+          timestamp: daysAgo(2, 9),
+        },
+        {
+          id: "gm8",
+          senderId: "u2",
+          content: "Parfait, on peut commencer à s'organiser !",
+          type: "text",
+          timestamp: daysAgo(2, 10),
+        },
+        {
+          id: "gm9",
+          senderId: "u6",
+          content: "Top ! Je m'occupe de la documentation",
+          type: "text",
+          timestamp: daysAgo(1, 14),
+        },
+      ],
+      createdAt: daysAgo(14),
+    },
+  ],
+
+  stories: [
+    {
+      id: "s1",
+      userId: "u2",
+      imageUrl: "https://picsum.photos/seed/lyon1/400/700",
+      caption: "Belle journée à Lyon ! La Fourvière sous le soleil",
+      location: { lat: 45.764, lng: 4.8357, city: "Lyon" },
+      createdAt: hoursAgo(8),
+      expiresAt: hoursFromNow(16),
+    },
+    {
+      id: "s2",
+      userId: "u3",
+      imageUrl: "https://picsum.photos/seed/marseille1/400/700",
+      caption: "La mer est magnifique aujourd'hui #Calanques",
+      location: { lat: 43.2965, lng: 5.3698, city: "Marseille" },
+      createdAt: hoursAgo(12),
+      expiresAt: hoursFromNow(12),
+    },
+    {
+      id: "s3",
+      userId: "u4",
+      imageUrl: "https://picsum.photos/seed/bordeaux1/400/700",
+      caption: "Dégustation au château ce matin #Gironde",
+      location: { lat: 44.8378, lng: -0.5792, city: "Bordeaux" },
+      createdAt: hoursAgo(6),
+      expiresAt: hoursFromNow(18),
+    },
+    {
+      id: "s4",
+      userId: "u5",
+      imageUrl: "https://picsum.photos/seed/toulouse1/400/700",
+      caption: "La ville rose sous le ciel bleu #Toulouse",
+      location: { lat: 43.6047, lng: 1.4442, city: "Toulouse" },
+      createdAt: hoursAgo(4),
+      expiresAt: hoursFromNow(20),
+    },
+    {
+      id: "s5",
+      userId: "u1",
+      imageUrl: "https://picsum.photos/seed/paris1/400/700",
+      caption: "Tour Eiffel au coucher du soleil #Paris",
+      location: { lat: 48.8566, lng: 2.3522, city: "Paris" },
+      createdAt: hoursAgo(2),
+      expiresAt: hoursFromNow(22),
+    },
+    {
+      id: "s6",
+      userId: "u6",
+      imageUrl: "https://picsum.photos/seed/lille1/400/700",
+      caption: "Grand Place de Lille en soirée #Lille",
+      location: { lat: 50.6292, lng: 3.0573, city: "Lille" },
+      createdAt: hoursAgo(10),
+      expiresAt: hoursFromNow(14),
+    },
+    {
+      id: "s7",
+      userId: "u7",
+      imageUrl: "https://picsum.photos/seed/nantes1/400/700",
+      caption: "Les Machines de l'île, c'est incroyable #Nantes",
+      location: { lat: 47.2184, lng: -1.5536, city: "Nantes" },
+      createdAt: hoursAgo(5),
+      expiresAt: hoursFromNow(19),
+    },
+    {
+      id: "s8",
+      userId: "u8",
+      imageUrl: "https://picsum.photos/seed/stras1/400/700",
+      caption: "Vieille ville magnifique au crépuscule #Strasbourg",
+      location: { lat: 48.5734, lng: 7.7521, city: "Strasbourg" },
+      createdAt: hoursAgo(7),
+      expiresAt: hoursFromNow(17),
+    },
+    {
+      id: "s9",
+      userId: "u2",
+      imageUrl: "https://picsum.photos/seed/lyon2/400/700",
+      caption: "Bouchon lyonnais ce soir, c'est trop bon !",
+      location: { lat: 45.764, lng: 4.8357, city: "Lyon" },
+      createdAt: hoursAgo(3),
+      expiresAt: hoursFromNow(21),
+    },
+    {
+      id: "s10",
+      userId: "u3",
+      imageUrl: "https://picsum.photos/seed/marseille2/400/700",
+      caption: "Sunset sur le Vieux-Port #Marseille #Beautiful",
+      location: { lat: 43.2965, lng: 5.3698, city: "Marseille" },
+      createdAt: hoursAgo(1),
+      expiresAt: hoursFromNow(23),
+    },
+  ],
+};

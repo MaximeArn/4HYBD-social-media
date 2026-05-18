@@ -77,7 +77,7 @@ const Chat: React.FC = () => {
     const reader = new FileReader();
     reader.onload = () => {
       const base64 = reader.result as string;
-      sendMessage(conversation.id, currentUser.id, '📷 Photo', 'image', base64);
+      sendMessage(conversation.id, currentUser.id, 'Photo', 'image', base64);
       loadConversation();
     };
     reader.readAsDataURL(file);
@@ -108,7 +108,7 @@ const Chat: React.FC = () => {
         <div className="messages-container">
           {messages.length === 0 && (
             <div className="chat-empty">
-              <p>Dis bonjour à {otherUser.username} ! 👋</p>
+              <p>Dis bonjour à {otherUser.username} !</p>
             </div>
           )}
           {messages.map((msg) => {

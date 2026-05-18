@@ -44,7 +44,7 @@ const Login: React.FC = () => {
       <IonContent className="login-content">
         <div className="login-container">
           <div className="login-logo">
-            <h1>📸 Snapshoot</h1>
+            <h1>Snapshoot</h1>
             <p>Capture & partage tes moments</p>
           </div>
 

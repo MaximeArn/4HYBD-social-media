@@ -10,7 +10,6 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
-  IonAlert,
   IonTextarea,
   IonButton,
   IonModal,
@@ -106,7 +105,7 @@ const Home: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle>📸 Snapshoot</IonTitle>
+          <IonTitle>Snapshoot</IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -127,7 +126,7 @@ const Home: React.FC = () => {
           </div>
         ) : stories.length === 0 ? (
           <div className="home-empty">
-            <p>😶 Aucune story dans ta zone.</p>
+            <p>Aucune story dans ta zone.</p>
             <p>Sois le premier à publier !</p>
           </div>
         ) : (
@@ -193,7 +192,7 @@ const Home: React.FC = () => {
                     <div>
                       <strong>{selectedStory.user.username}</strong>
                       <p style={{ margin: 0, fontSize: '0.85rem', color: 'gray' }}>
-                        📍 {selectedStory.location.city} — {formatDistance(selectedStory.distance)}
+                        {selectedStory.location.city} — {formatDistance(selectedStory.distance)}
                       </p>
                     </div>
                   </div>
@@ -225,7 +224,7 @@ const Home: React.FC = () => {
                     <img src={newImage} alt="preview" style={{ width: '100%', borderRadius: '12px', maxHeight: '300px', objectFit: 'cover' }} />
                   ) : (
                     <div className="image-placeholder">
-                      <p>📷 Ajouter une photo</p>
+                      <p>Ajouter une photo</p>
                     </div>
                   )}
                   <label className="pick-image-btn">
@@ -235,7 +234,7 @@ const Home: React.FC = () => {
                 </div>
 
                 <IonTextarea
-                  placeholder="Dis quelque chose... ✍️"
+                  placeholder="Dis quelque chose..."
                   value={newCaption}
                   onIonInput={(e) => setNewCaption(e.detail.value!)}
                   rows={3}

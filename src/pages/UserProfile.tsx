@@ -92,7 +92,7 @@ const UserProfile: React.FC = () => {
           </IonAvatar>
           <h2 className="profile-username">{profileUser.username}</h2>
           <p className="profile-bio">{profileUser.bio || 'Pas de bio'}</p>
-          <p className="profile-location">📍 {profileUser.location.city}</p>
+          <p className="profile-location">{profileUser.location.city}</p>
         </div>
 
         {/* Boutons d'action */}
@@ -127,7 +127,7 @@ const UserProfile: React.FC = () => {
               <IonItem>
                 <IonLabel>
                   <IonText color="medium"><small>Ville</small></IonText>
-                  <p>📍 {profileUser.location.city}</p>
+                  <p>{profileUser.location.city}</p>
                 </IonLabel>
               </IonItem>
               <IonItem>

@@ -11,7 +11,6 @@ import {
   IonList,
   IonItem,
   IonAvatar,
-  IonText,
   IonNote,
   IonFab,
   IonFabButton,
@@ -104,7 +103,7 @@ const Messages: React.FC = () => {
           <>
             {conversations.length === 0 ? (
               <div className="messages-empty">
-                <p>💬 Aucune conversation</p>
+                <p>Aucune conversation</p>
                 <p>Appuie sur + pour écrire à quelqu'un</p>
               </div>
             ) : (
@@ -124,7 +123,7 @@ const Messages: React.FC = () => {
                       {conv.lastMessage && (
                         <p>
                           {conv.lastMessage.type === 'image'
-                            ? '📷 Photo'
+                            ? 'Photo'
                             : conv.lastMessage.content}
                         </p>
                       )}
@@ -145,7 +144,7 @@ const Messages: React.FC = () => {
           <>
             {groups.length === 0 ? (
               <div className="messages-empty">
-                <p>👥 Aucun groupe</p>
+                <p>Aucun groupe</p>
                 <p>Appuie sur + pour créer un groupe</p>
               </div>
             ) : (
@@ -165,7 +164,7 @@ const Messages: React.FC = () => {
                       <p>
                         {group.lastMessage
                           ? group.lastMessage.type === 'image'
-                            ? '📷 Photo'
+                            ? 'Photo'
                             : group.lastMessage.content
                           : group.description || `${group.members.length} membres`}
                       </p>

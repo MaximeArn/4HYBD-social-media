@@ -144,7 +144,7 @@ const Profile: React.FC = () => {
             <>
               <h2 className="profile-username">{user.username}</h2>
               <p className="profile-bio">{user.bio || 'Pas de bio'}</p>
-              <p className="profile-location">📍 {user.location.city}</p>
+              <p className="profile-location">{user.location.city}</p>
             </>
           ) : (
             <p style={{ color: 'white', opacity: 0.8, fontSize: '0.85rem' }}>Mode édition</p>
@@ -205,7 +205,7 @@ const Profile: React.FC = () => {
                 <IonItem>
                   <IonLabel>
                     <IonText color="medium"><small>Localisation</small></IonText>
-                    <p>📍 {user.location.city} ({user.location.lat.toFixed(4)}, {user.location.lng.toFixed(4)})</p>
+                    <p>{user.location.city} ({user.location.lat.toFixed(4)}, {user.location.lng.toFixed(4)})</p>
                   </IonLabel>
                 </IonItem>
                 <IonItem>

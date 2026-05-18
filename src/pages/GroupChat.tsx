@@ -69,7 +69,7 @@ const GroupChat: React.FC = () => {
     if (!file || !currentUser || !group) return;
     const reader = new FileReader();
     reader.onload = () => {
-      sendGroupMessage(group.id, currentUser.id, '📷 Photo', 'image', reader.result as string);
+      sendGroupMessage(group.id, currentUser.id, 'Photo', 'image', reader.result as string);
       loadGroup();
     };
     reader.readAsDataURL(file);
@@ -113,7 +113,7 @@ const GroupChat: React.FC = () => {
         <div className="messages-container">
           {messages.length === 0 && (
             <div className="chat-empty">
-              <p>Bienvenue dans le groupe ! 🎉</p>
+              <p>Bienvenue dans le groupe !</p>
             </div>
           )}
           {messages.map((msg) => {
