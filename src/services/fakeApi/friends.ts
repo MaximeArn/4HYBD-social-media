@@ -1,6 +1,7 @@
+import type { AddFriendDto, RemoveFriendDto } from './types/dto';
 import { db } from './seed';
 
-export function addFriend(userId: string, friendId: string): void {
+export function addFriend({ userId, friendId }: AddFriendDto): void {
   const user = db.users.find((u) => u.id === userId);
   const friend = db.users.find((u) => u.id === friendId);
   if (!user || !friend) return;
@@ -8,7 +9,7 @@ export function addFriend(userId: string, friendId: string): void {
   if (!friend.friends.includes(userId)) friend.friends.push(userId);
 }
 
-export function removeFriend(userId: string, friendId: string): void {
+export function removeFriend({ userId, friendId }: RemoveFriendDto): void {
   const user = db.users.find((u) => u.id === userId);
   const friend = db.users.find((u) => u.id === friendId);
   if (user) user.friends = user.friends.filter((id) => id !== friendId);

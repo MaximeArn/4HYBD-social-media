@@ -5,7 +5,6 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonAvatar,
   IonButton,
   IonIcon,
   IonButtons,
@@ -28,6 +27,7 @@ import {
   getOrCreateConversation,
   type User,
 } from '../services/fakeApi';
+import ProfileHeader from '../components/ProfileHeader';
 import './Profile.css';
 
 const UserProfile: React.FC = () => {
@@ -54,21 +54,21 @@ const UserProfile: React.FC = () => {
 
   function handleAddFriend() {
     if (!currentUser || !profileUser) return;
-    addFriend(currentUser.id, profileUser.id);
+    addFriend({ userId: currentUser.id, friendId: profileUser.id });
     setIsFriend(true);
     setToastMsg(`${profileUser.username} ajouté(e) à tes amis !`);
   }
 
   function handleRemoveFriend() {
     if (!currentUser || !profileUser) return;
-    removeFriend(currentUser.id, profileUser.id);
+    removeFriend({ userId: currentUser.id, friendId: profileUser.id });
     setIsFriend(false);
     setToastMsg(`${profileUser.username} retiré(e) de tes amis.`);
   }
 
   function handleMessage() {
     if (!currentUser || !profileUser) return;
-    const conv = getOrCreateConversation(currentUser.id, profileUser.id);
+    const conv = getOrCreateConversation({ userId1: currentUser.id, userId2: profileUser.id });
     history.push(`/tabs/chat/${conv.id}`);
   }
 
@@ -86,16 +86,8 @@ const UserProfile: React.FC = () => {
       </IonHeader>
 
       <IonContent>
-        <div className="profile-header">
-          <IonAvatar className="profile-avatar">
-            <img src={profileUser.avatar} alt={profileUser.username} />
-          </IonAvatar>
-          <h2 className="profile-username">{profileUser.username}</h2>
-          <p className="profile-bio">{profileUser.bio || 'Pas de bio'}</p>
-          <p className="profile-location">{profileUser.location.city}</p>
-        </div>
+        <ProfileHeader user={profileUser} />
 
-        {/* Boutons d'action */}
         <div style={{ padding: '16px', display: 'flex', gap: '12px' }}>
           <IonButton expand="block" fill="outline" onClick={handleMessage} style={{ flex: 1 }}>
             <IonIcon icon={chatbubbleOutline} slot="start" />
@@ -114,7 +106,6 @@ const UserProfile: React.FC = () => {
           )}
         </div>
 
-        {/* Infos du profil */}
         <IonCard>
           <IonCardContent>
             <IonList lines="none">

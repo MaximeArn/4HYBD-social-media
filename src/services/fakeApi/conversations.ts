@@ -1,5 +1,6 @@
-import type { Conversation, Message, User } from './types';
-import { db, generateId } from './seed';
+import type { Conversation, Message, User } from "./types/entities";
+import type { GetOrCreateConversationDto, SendMessageDto } from "./types/dto";
+import { db, generateId } from "./seed";
 
 export function getConversations(
   userId: string,
@@ -23,10 +24,10 @@ export function getConversations(
     });
 }
 
-export function getOrCreateConversation(
-  userId1: string,
-  userId2: string,
-): Conversation {
+export function getOrCreateConversation({
+  userId1,
+  userId2,
+}: GetOrCreateConversationDto): Conversation {
   const existing = db.conversations.find(
     (c) => c.participants.includes(userId1) && c.participants.includes(userId2),
   );
@@ -45,13 +46,13 @@ export function getConversation(id: string): Conversation | undefined {
   return db.conversations.find((c) => c.id === id);
 }
 
-export function sendMessage(
-  conversationId: string,
-  senderId: string,
-  content: string,
-  type: "text" | "image" = "text",
-  imageUrl?: string,
-): Message | null {
+export function sendMessage({
+  conversationId,
+  senderId,
+  content,
+  type = "text",
+  imageUrl,
+}: SendMessageDto): Message | null {
   const conv = db.conversations.find((c) => c.id === conversationId);
   if (!conv) return null;
 

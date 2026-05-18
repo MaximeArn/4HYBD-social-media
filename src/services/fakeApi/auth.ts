@@ -1,7 +1,8 @@
-import type { User } from './types';
-import { db, generateId } from './seed';
+import type { User } from "./types/entities";
+import type { LoginDto, RegisterDto } from "./types/dto";
+import { db, generateId } from "./seed";
 
-export function login(email: string, password: string): User | null {
+export function login({ email, password }: LoginDto): User | null {
   const user = db.users.find(
     (u) =>
       u.email.toLowerCase() === email.toLowerCase() && u.password === password,
@@ -22,13 +23,10 @@ export function getCurrentUser(): User | null {
   return db.users.find((u) => u.id === id) || null;
 }
 
-export function register(data: {
-  email: string;
-  password: string;
-  username: string;
-  bio?: string;
-  city?: string;
-}): { user: User | null; error: string | null } {
+export function register(data: RegisterDto): {
+  user: User | null;
+  error: string | null;
+} {
   const existing = db.users.find(
     (u) => u.email.toLowerCase() === data.email.toLowerCase(),
   );

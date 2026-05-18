@@ -1,23 +1,5 @@
-import type { User, Conversation, Group, Story } from './types';
-
-function hoursAgo(h: number): string {
-  const d = new Date();
-  d.setHours(d.getHours() - h);
-  return d.toISOString();
-}
-
-function daysAgo(days: number, hour = 12): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  d.setHours(hour, 0, 0, 0);
-  return d.toISOString();
-}
-
-function hoursFromNow(h: number): string {
-  const d = new Date();
-  d.setHours(d.getHours() + h);
-  return d.toISOString();
-}
+import type { User, Conversation, Group, Story } from "./types/entities";
+import { hoursAgo, daysAgo, hoursFromNow } from "./utils";
 
 let nextId = 200;
 export function generateId(): string {

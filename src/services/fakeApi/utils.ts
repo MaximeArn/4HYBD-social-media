@@ -1,3 +1,22 @@
+export function hoursAgo(h: number): string {
+  const d = new Date();
+  d.setHours(d.getHours() - h);
+  return d.toISOString();
+}
+
+export function daysAgo(days: number, hour = 12): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  d.setHours(hour, 0, 0, 0);
+  return d.toISOString();
+}
+
+export function hoursFromNow(h: number): string {
+  const d = new Date();
+  d.setHours(d.getHours() + h);
+  return d.toISOString();
+}
+
 export function formatTime(timestamp: string): string {
   const date = new Date(timestamp);
   const now = new Date();

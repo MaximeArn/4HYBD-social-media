@@ -26,7 +26,7 @@ const Login: React.FC = () => {
       setError('Veuillez remplir tous les champs.');
       return;
     }
-    const user = login(email, password);
+    const user = login({ email, password });
     if (!user) {
       setError('Email ou mot de passe incorrect.');
       return;

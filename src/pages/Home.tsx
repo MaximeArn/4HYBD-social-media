@@ -15,13 +15,9 @@ import {
   IonModal,
   IonText,
   IonSpinner,
-  IonCard,
-  IonCardContent,
   IonAvatar,
-  IonChip,
-  IonLabel,
 } from '@ionic/react';
-import { add, locationOutline, timeOutline } from 'ionicons/icons';
+import { add, locationOutline } from 'ionicons/icons';
 import {
   getCurrentUser,
   getStoriesNearby,
@@ -31,6 +27,7 @@ import {
   type Story,
   type User,
 } from '../services/fakeApi';
+import StoryCard from '../components/StoryCard';
 import './Home.css';
 
 type StoryWithUser = Story & { user: User; distance: number };
@@ -49,24 +46,21 @@ const Home: React.FC = () => {
     if (!currentUser) return;
     setLoading(true);
 
-    // On utilise la position GPS du navigateur si disponible,
-    // sinon on utilise la localisation stockée dans le profil
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const result = getStoriesNearby(pos.coords.latitude, pos.coords.longitude, 1000);
+          const result = getStoriesNearby({ lat: pos.coords.latitude, lng: pos.coords.longitude, radiusKm: 1000 });
           setStories(result);
           setLoading(false);
         },
         () => {
-          // L'utilisateur a refusé la géoloc : on utilise sa ville du profil
-          const result = getStoriesNearby(currentUser.location.lat, currentUser.location.lng, 1000);
+          const result = getStoriesNearby({ lat: currentUser.location.lat, lng: currentUser.location.lng, radiusKm: 1000 });
           setStories(result);
           setLoading(false);
         }
       );
     } else {
-      const result = getStoriesNearby(currentUser.location.lat, currentUser.location.lng, 1000);
+      const result = getStoriesNearby({ lat: currentUser.location.lat, lng: currentUser.location.lng, radiusKm: 1000 });
       setStories(result);
       setLoading(false);
     }
@@ -92,7 +86,7 @@ const Home: React.FC = () => {
   function handlePostStory() {
     if (!currentUser || !newCaption) return;
     const imageUrl = newImage || `https://picsum.photos/seed/${Date.now()}/400/700`;
-    createStory(currentUser.id, newCaption, imageUrl);
+    createStory({ userId: currentUser.id, caption: newCaption, imageUrl });
     setNewCaption('');
     setNewImage('');
     setShowNewStory(false);
@@ -132,45 +126,17 @@ const Home: React.FC = () => {
         ) : (
           <div className="stories-list">
             {stories.map((story) => (
-              <IonCard key={story.id} className="story-card" onClick={() => setSelectedStory(story)}>
-                <div className="story-image-container">
-                  <img src={story.imageUrl} alt="story" className="story-image" />
-                  <div className="story-overlay">
-                    <div className="story-user-info">
-                      <IonAvatar className="story-avatar">
-                        <img src={story.user.avatar} alt={story.user.username} />
-                      </IonAvatar>
-                      <span className="story-username">{story.user.username}</span>
-                    </div>
-                    <div className="story-chips">
-                      <IonChip className="story-chip">
-                        <IonIcon icon={locationOutline} />
-                        <IonLabel>{formatDistance(story.distance)}</IonLabel>
-                      </IonChip>
-                      <IonChip className="story-chip">
-                        <IonIcon icon={timeOutline} />
-                        <IonLabel>{formatTime(story.createdAt)}</IonLabel>
-                      </IonChip>
-                    </div>
-                  </div>
-                </div>
-                <IonCardContent className="story-caption">
-                  <p>{story.caption}</p>
-                  <small>{story.location.city}</small>
-                </IonCardContent>
-              </IonCard>
+              <StoryCard key={story.id} story={story} onClick={setSelectedStory} />
             ))}
           </div>
         )}
 
-        {/* FAB pour publier une nouvelle story */}
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton onClick={() => setShowNewStory(true)}>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
 
-        {/* Modal : détail d'une story */}
         <IonModal isOpen={!!selectedStory} onDidDismiss={() => setSelectedStory(null)}>
           {selectedStory && (
             <IonPage>
@@ -206,7 +172,6 @@ const Home: React.FC = () => {
           )}
         </IonModal>
 
-        {/* Modal : publier une nouvelle story */}
         <IonModal isOpen={showNewStory} onDidDismiss={() => setShowNewStory(false)}>
           <IonPage>
             <IonHeader>

@@ -5,7 +5,6 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonAvatar,
   IonList,
   IonItem,
   IonLabel,
@@ -30,6 +29,7 @@ import {
   logout,
   type User,
 } from '../services/fakeApi';
+import ProfileHeader from '../components/ProfileHeader';
 import './Profile.css';
 
 const VILLES = [
@@ -135,23 +135,8 @@ const Profile: React.FC = () => {
       </IonHeader>
 
       <IonContent>
-        {/* En-tête du profil */}
-        <div className="profile-header">
-          <IonAvatar className="profile-avatar">
-            <img src={user.avatar} alt={user.username} />
-          </IonAvatar>
-          {!editing ? (
-            <>
-              <h2 className="profile-username">{user.username}</h2>
-              <p className="profile-bio">{user.bio || 'Pas de bio'}</p>
-              <p className="profile-location">{user.location.city}</p>
-            </>
-          ) : (
-            <p style={{ color: 'white', opacity: 0.8, fontSize: '0.85rem' }}>Mode édition</p>
-          )}
-        </div>
+        <ProfileHeader user={user} editing={editing} />
 
-        {/* Formulaire d'édition */}
         {editing && (
           <IonCard className="edit-card">
             <IonCardContent>
@@ -191,7 +176,6 @@ const Profile: React.FC = () => {
           </IonCard>
         )}
 
-        {/* Infos du compte */}
         {!editing && (
           <IonCard>
             <IonCardContent>
@@ -225,7 +209,6 @@ const Profile: React.FC = () => {
           </IonCard>
         )}
 
-        {/* Actions du compte */}
         <div className="profile-actions">
           <IonButton
             expand="block"

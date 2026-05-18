@@ -1,6 +1,7 @@
-import type { User } from './types';
-import { db } from './seed';
-import { logout } from './auth';
+import type { User } from "./types/entities";
+import type { UpdateUserDto } from "./types/dto";
+import { db } from "./seed";
+import { logout } from "./auth";
 
 export function getUsers(): User[] {
   return db.users;
@@ -14,10 +15,7 @@ export function getUserByEmail(email: string): User | undefined {
   return db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
 }
 
-export function updateUser(
-  id: string,
-  updates: Partial<Omit<User, "id" | "password">>,
-): User | null {
+export function updateUser(id: string, updates: UpdateUserDto): User | null {
   const index = db.users.findIndex((u) => u.id === id);
   if (index === -1) return null;
   db.users[index] = { ...db.users[index], ...updates };

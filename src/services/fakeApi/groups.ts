@@ -1,5 +1,10 @@
-import type { Group, Message } from './types';
-import { db, generateId } from './seed';
+import type { Group, Message } from "./types/entities";
+import type {
+  CreateGroupDto,
+  SendGroupMessageDto,
+  LeaveGroupDto,
+} from "./types/dto";
+import { db, generateId } from "./seed";
 
 export function getGroups(
   userId: string,
@@ -25,12 +30,12 @@ export function getGroup(id: string): Group | undefined {
   return db.groups.find((g) => g.id === id);
 }
 
-export function createGroup(
-  name: string,
-  description: string,
-  memberIds: string[],
-  createdBy: string,
-): Group {
+export function createGroup({
+  name,
+  description,
+  memberIds,
+  createdBy,
+}: CreateGroupDto): Group {
   const members = memberIds.includes(createdBy)
     ? memberIds
     : [createdBy, ...memberIds];
@@ -47,13 +52,13 @@ export function createGroup(
   return newGroup;
 }
 
-export function sendGroupMessage(
-  groupId: string,
-  senderId: string,
-  content: string,
-  type: "text" | "image" = "text",
-  imageUrl?: string,
-): Message | null {
+export function sendGroupMessage({
+  groupId,
+  senderId,
+  content,
+  type = "text",
+  imageUrl,
+}: SendGroupMessageDto): Message | null {
   const group = db.groups.find((g) => g.id === groupId);
   if (!group) return null;
 
@@ -69,7 +74,7 @@ export function sendGroupMessage(
   return message;
 }
 
-export function leaveGroup(groupId: string, userId: string): void {
+export function leaveGroup({ groupId, userId }: LeaveGroupDto): void {
   const group = db.groups.find((g) => g.id === groupId);
   if (group) {
     group.members = group.members.filter((id) => id !== userId);

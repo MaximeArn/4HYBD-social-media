@@ -5,18 +5,14 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonFooter,
-  IonInput,
   IonButton,
   IonIcon,
-  IonAvatar,
   IonButtons,
   IonBackButton,
-  IonText,
   IonAlert,
   IonActionSheet,
 } from '@ionic/react';
-import { send, imageOutline, ellipsisVertical, exitOutline, informationCircleOutline } from 'ionicons/icons';
+import { ellipsisVertical, exitOutline, informationCircleOutline } from 'ionicons/icons';
 import { useParams, useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
@@ -24,10 +20,11 @@ import {
   sendGroupMessage,
   getUserById,
   leaveGroup,
-  formatTime,
   type Message,
   type Group,
 } from '../services/fakeApi';
+import MessageBubble from '../components/MessageBubble';
+import ChatInputBar from '../components/ChatInputBar';
 import './Chat.css';
 import './GroupChat.css';
 
@@ -35,7 +32,6 @@ const GroupChat: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [group, setGroup] = useState<Group | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputText, setInputText] = useState('');
   const [showActionSheet, setShowActionSheet] = useState(false);
   const [showLeaveAlert, setShowLeaveAlert] = useState(false);
   const contentRef = useRef<HTMLIonContentElement>(null);
@@ -57,10 +53,9 @@ const GroupChat: React.FC = () => {
     setMessages([...g.messages]);
   }
 
-  function handleSend() {
-    if (!inputText.trim() || !currentUser || !group) return;
-    sendGroupMessage(group.id, currentUser.id, inputText.trim());
-    setInputText('');
+  function handleSendText(text: string) {
+    if (!currentUser || !group) return;
+    sendGroupMessage({ groupId: group.id, senderId: currentUser.id, content: text });
     loadGroup();
   }
 
@@ -69,7 +64,7 @@ const GroupChat: React.FC = () => {
     if (!file || !currentUser || !group) return;
     const reader = new FileReader();
     reader.onload = () => {
-      sendGroupMessage(group.id, currentUser.id, 'Photo', 'image', reader.result as string);
+      sendGroupMessage({ groupId: group.id, senderId: currentUser.id, content: 'Photo', type: 'image', imageUrl: reader.result as string });
       loadGroup();
     };
     reader.readAsDataURL(file);
@@ -78,12 +73,8 @@ const GroupChat: React.FC = () => {
 
   function handleLeaveGroup() {
     if (!currentUser || !group) return;
-    leaveGroup(group.id, currentUser.id);
+    leaveGroup({ groupId: group.id, userId: currentUser.id });
     history.replace('/tabs/messages');
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') handleSend();
   }
 
   if (!currentUser || !group) return null;
@@ -120,51 +111,19 @@ const GroupChat: React.FC = () => {
             const isMe = msg.senderId === currentUser.id;
             const sender = getUserById(msg.senderId);
             return (
-              <div key={msg.id} className={`message-bubble-wrapper ${isMe ? 'me' : 'them'}`}>
-                {!isMe && sender && (
-                  <IonAvatar className="bubble-avatar">
-                    <img src={sender.avatar} alt={sender.username} />
-                  </IonAvatar>
-                )}
-                <div>
-                  {!isMe && sender && (
-                    <p className="sender-name">{sender.username}</p>
-                  )}
-                  <div className={`message-bubble ${isMe ? 'bubble-me' : 'bubble-them'}`}>
-                    {msg.type === 'image' && msg.imageUrl ? (
-                      <img src={msg.imageUrl} alt="photo" className="message-image" />
-                    ) : (
-                      <p>{msg.content}</p>
-                    )}
-                    <IonText color="medium">
-                      <span className="message-time-small">{formatTime(msg.timestamp)}</span>
-                    </IonText>
-                  </div>
-                </div>
-              </div>
+              <MessageBubble
+                key={msg.id}
+                message={msg}
+                isMe={isMe}
+                sender={isMe ? undefined : sender}
+                showSenderName
+              />
             );
           })}
         </div>
       </IonContent>
 
-      <IonFooter className="chat-footer">
-        <div className="chat-input-bar">
-          <label className="image-send-btn">
-            <IonIcon icon={imageOutline} />
-            <input type="file" accept="image/*" onChange={handleImageSend} style={{ display: 'none' }} />
-          </label>
-          <IonInput
-            className="chat-input"
-            value={inputText}
-            onIonInput={(e) => setInputText(e.detail.value!)}
-            onKeyDown={handleKeyDown}
-            placeholder="Message..."
-          />
-          <IonButton fill="clear" onClick={handleSend} disabled={!inputText.trim()} className="send-btn">
-            <IonIcon icon={send} color="primary" />
-          </IonButton>
-        </div>
-      </IonFooter>
+      <ChatInputBar onSend={handleSendText} onImageSend={handleImageSend} />
 
       <IonActionSheet
         isOpen={showActionSheet}

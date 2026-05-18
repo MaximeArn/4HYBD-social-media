@@ -7,18 +7,12 @@ import {
   IonContent,
   IonSearchbar,
   IonList,
-  IonItem,
-  IonAvatar,
-  IonLabel,
-  IonButton,
-  IonIcon,
   IonNote,
   IonSegment,
   IonSegmentButton,
-  IonText,
+  IonLabel,
   IonToast,
 } from '@ionic/react';
-import { personAddOutline, personRemoveOutline, chatbubbleOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
@@ -29,6 +23,7 @@ import {
   getOrCreateConversation,
   type User,
 } from '../services/fakeApi';
+import UserListItem from '../components/UserListItem';
 
 const Friends: React.FC = () => {
   const [segment, setSegment] = useState<'mes-amis' | 'recherche'>('mes-amis');
@@ -45,7 +40,6 @@ const Friends: React.FC = () => {
 
   function loadFriends() {
     if (!currentUser) return;
-    // On relit le currentUser depuis la "DB" pour avoir la liste à jour
     const freshUser = getUserById(currentUser.id);
     if (!freshUser) return;
     const friendList = freshUser.friends
@@ -65,25 +59,25 @@ const Friends: React.FC = () => {
 
   function handleAddFriend(user: User) {
     if (!currentUser) return;
-    addFriend(currentUser.id, user.id);
+    addFriend({ userId: currentUser.id, friendId: user.id });
     loadFriends();
     setToastMsg(`${user.username} ajouté(e) à tes amis !`);
   }
 
   function handleRemoveFriend(user: User) {
     if (!currentUser) return;
-    removeFriend(currentUser.id, user.id);
+    removeFriend({ userId: currentUser.id, friendId: user.id });
     loadFriends();
     setToastMsg(`${user.username} retiré(e) de tes amis.`);
   }
 
   function handleMessage(user: User) {
     if (!currentUser) return;
-    const conv = getOrCreateConversation(currentUser.id, user.id);
+    const conv = getOrCreateConversation({ userId1: currentUser.id, userId2: user.id });
     history.push(`/tabs/chat/${conv.id}`);
   }
 
-  function isFriend(userId: string): boolean {
+  function isFriendOf(userId: string): boolean {
     return friends.some((f) => f.id === userId);
   }
 
@@ -118,21 +112,14 @@ const Friends: React.FC = () => {
             ) : (
               <IonList>
                 {friends.map((friend) => (
-                  <IonItem key={friend.id}>
-                    <IonAvatar slot="start" onClick={() => history.push(`/tabs/user/${friend.id}`)}>
-                      <img src={friend.avatar} alt={friend.username} />
-                    </IonAvatar>
-                    <IonLabel onClick={() => history.push(`/tabs/user/${friend.id}`)}>
-                      <h2>{friend.username}</h2>
-                      <p>{friend.location.city}</p>
-                    </IonLabel>
-                    <IonButton fill="clear" onClick={() => handleMessage(friend)}>
-                      <IonIcon icon={chatbubbleOutline} />
-                    </IonButton>
-                    <IonButton fill="clear" color="danger" onClick={() => handleRemoveFriend(friend)}>
-                      <IonIcon icon={personRemoveOutline} />
-                    </IonButton>
-                  </IonItem>
+                  <UserListItem
+                    key={friend.id}
+                    user={friend}
+                    onViewProfile={(id) => history.push(`/tabs/user/${id}`)}
+                    onMessage={() => handleMessage(friend)}
+                    onRemoveFriend={() => handleRemoveFriend(friend)}
+                    iconActions
+                  />
                 ))}
               </IonList>
             )}
@@ -159,29 +146,15 @@ const Friends: React.FC = () => {
 
             <IonList>
               {searchResults.map((user) => (
-                <IonItem key={user.id}>
-                  <IonAvatar slot="start" onClick={() => history.push(`/tabs/user/${user.id}`)}>
-                    <img src={user.avatar} alt={user.username} />
-                  </IonAvatar>
-                  <IonLabel onClick={() => history.push(`/tabs/user/${user.id}`)}>
-                    <h2>{user.username}</h2>
-                    <p>{user.location.city}</p>
-                    <IonText color="medium">
-                      <small>{user.email}</small>
-                    </IonText>
-                  </IonLabel>
-                  {isFriend(user.id) ? (
-                    <IonButton fill="outline" color="danger" size="small" onClick={() => handleRemoveFriend(user)}>
-                      <IonIcon icon={personRemoveOutline} slot="start" />
-                      Retirer
-                    </IonButton>
-                  ) : (
-                    <IonButton fill="solid" color="primary" size="small" onClick={() => handleAddFriend(user)}>
-                      <IonIcon icon={personAddOutline} slot="start" />
-                      Ajouter
-                    </IonButton>
-                  )}
-                </IonItem>
+                <UserListItem
+                  key={user.id}
+                  user={user}
+                  onViewProfile={(id) => history.push(`/tabs/user/${id}`)}
+                  showEmail
+                  isFriend={isFriendOf(user.id)}
+                  onAddFriend={() => handleAddFriend(user)}
+                  onRemoveFriend={() => handleRemoveFriend(user)}
+                />
               ))}
             </IonList>
           </>

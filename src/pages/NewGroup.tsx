@@ -61,7 +61,7 @@ const NewGroup: React.FC = () => {
     }
     if (!currentUser) return;
 
-    const newGroup = createGroup(groupName.trim(), description.trim(), selectedIds, currentUser.id);
+    const newGroup = createGroup({ name: groupName.trim(), description: description.trim(), memberIds: selectedIds, createdBy: currentUser.id });
     history.replace(`/tabs/group-chat/${newGroup.id}`);
   }
 

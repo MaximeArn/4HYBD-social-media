@@ -1,5 +1,6 @@
-import type { Story, User } from './types';
-import { db, generateId } from './seed';
+import type { Story, User } from "./types/entities";
+import type { GetStoriesNearbyDto, CreateStoryDto } from "./types/dto";
+import { db, generateId } from "./seed";
 
 function getDistance(
   lat1: number,
@@ -20,11 +21,11 @@ function getDistance(
   return R * c;
 }
 
-export function getStoriesNearby(
-  lat: number,
-  lng: number,
-  radiusKm: number = 1000,
-): (Story & { user: User; distance: number })[] {
+export function getStoriesNearby({
+  lat,
+  lng,
+  radiusKm = 1000,
+}: GetStoriesNearbyDto): (Story & { user: User; distance: number })[] {
   const now = new Date();
   return db.stories
     .filter((s) => new Date(s.expiresAt) > now)
@@ -37,11 +38,11 @@ export function getStoriesNearby(
     .sort((a, b) => a.distance - b.distance);
 }
 
-export function createStory(
-  userId: string,
-  caption: string,
-  imageUrl: string,
-): Story {
+export function createStory({
+  userId,
+  caption,
+  imageUrl,
+}: CreateStoryDto): Story {
   const user = db.users.find((u) => u.id === userId)!;
   const newStory: Story = {
     id: generateId(),

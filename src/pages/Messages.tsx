@@ -11,7 +11,6 @@ import {
   IonList,
   IonItem,
   IonAvatar,
-  IonNote,
   IonFab,
   IonFabButton,
   IonIcon,
@@ -20,7 +19,7 @@ import {
   IonButton,
   IonButtons,
 } from '@ionic/react';
-import { add, peopleOutline } from 'ionicons/icons';
+import { add } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
@@ -28,9 +27,10 @@ import {
   getGroups,
   getOrCreateConversation,
   searchUsers,
-  formatTime,
   type User,
 } from '../services/fakeApi';
+import ConversationItem from '../components/ConversationItem';
+import GroupItem from '../components/GroupItem';
 import './Messages.css';
 
 const Messages: React.FC = () => {
@@ -67,7 +67,7 @@ const Messages: React.FC = () => {
 
   function openChatWith(user: User) {
     if (!currentUser) return;
-    const conv = getOrCreateConversation(currentUser.id, user.id);
+    const conv = getOrCreateConversation({ userId1: currentUser.id, userId2: user.id });
     setShowNewChat(false);
     history.push(`/tabs/chat/${conv.id}`);
   }
@@ -109,31 +109,11 @@ const Messages: React.FC = () => {
             ) : (
               <IonList>
                 {conversations.map((conv) => (
-                  <IonItem
+                  <ConversationItem
                     key={conv.id}
-                    button
+                    conversation={conv}
                     onClick={() => history.push(`/tabs/chat/${conv.id}`)}
-                    detail
-                  >
-                    <IonAvatar slot="start">
-                      <img src={conv.otherUser.avatar} alt={conv.otherUser.username} />
-                    </IonAvatar>
-                    <IonLabel>
-                      <h2>{conv.otherUser.username}</h2>
-                      {conv.lastMessage && (
-                        <p>
-                          {conv.lastMessage.type === 'image'
-                            ? 'Photo'
-                            : conv.lastMessage.content}
-                        </p>
-                      )}
-                    </IonLabel>
-                    {conv.lastMessage && (
-                      <IonNote slot="end" className="message-time">
-                        {formatTime(conv.lastMessage.timestamp)}
-                      </IonNote>
-                    )}
-                  </IonItem>
+                  />
                 ))}
               </IonList>
             )}
@@ -150,38 +130,17 @@ const Messages: React.FC = () => {
             ) : (
               <IonList>
                 {groups.map((group) => (
-                  <IonItem
+                  <GroupItem
                     key={group.id}
-                    button
+                    group={group}
                     onClick={() => history.push(`/tabs/group-chat/${group.id}`)}
-                    detail
-                  >
-                    <div slot="start" className="group-icon">
-                      <IonIcon icon={peopleOutline} />
-                    </div>
-                    <IonLabel>
-                      <h2>{group.name}</h2>
-                      <p>
-                        {group.lastMessage
-                          ? group.lastMessage.type === 'image'
-                            ? 'Photo'
-                            : group.lastMessage.content
-                          : group.description || `${group.members.length} membres`}
-                      </p>
-                    </IonLabel>
-                    {group.lastMessage && (
-                      <IonNote slot="end" className="message-time">
-                        {formatTime(group.lastMessage.timestamp)}
-                      </IonNote>
-                    )}
-                  </IonItem>
+                  />
                 ))}
               </IonList>
             )}
           </>
         )}
 
-        {/* FAB : nouveau chat direct OU nouveau groupe */}
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton
             onClick={() => {
@@ -196,7 +155,6 @@ const Messages: React.FC = () => {
           </IonFabButton>
         </IonFab>
 
-        {/* Modal : chercher un utilisateur pour démarrer une conv */}
         <IonModal isOpen={showNewChat} onDidDismiss={() => setShowNewChat(false)}>
           <IonHeader>
             <IonToolbar color="primary">

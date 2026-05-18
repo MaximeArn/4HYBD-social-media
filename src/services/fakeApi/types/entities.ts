@@ -18,7 +18,7 @@ export interface Message {
   id: string;
   senderId: string;
   content: string;
-  type: "text" | "image";
+  type: 'text' | 'image';
   imageUrl?: string;
   timestamp: string;
 }
