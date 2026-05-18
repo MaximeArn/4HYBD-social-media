@@ -1,18 +1,8 @@
 import { useState } from 'react';
-import {
-  IonPage,
-  IonContent,
-  IonInput,
-  IonButton,
-  IonItem,
-  IonLabel,
-  IonText,
-  IonList,
-  IonNote,
-} from '@ionic/react';
+import { IonPage, IonContent, IonButton, IonText } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { login } from '../services/fakeApi';
-import './Login.css';
+import './auth.css';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -34,67 +24,48 @@ const Login: React.FC = () => {
     history.replace('/tabs/home');
   }
 
-  function loginAsDemo(demoEmail: string) {
-    setEmail(demoEmail);
-    setPassword('password123');
-  }
-
   return (
     <IonPage>
-      <IonContent className="login-content">
-        <div className="login-container">
-          <div className="login-logo">
-            <h1>Snapshoot</h1>
-            <p>Capture & partage tes moments</p>
-          </div>
+      <IonContent className="auth-content">
+        <div className="auth-wrapper">
+          <div className="auth-card">
+            <div className="auth-brand">
+              <h1>Snapshoot</h1>
+              <p>Capture & partage tes moments</p>
+            </div>
 
-          <IonList className="login-form">
-            <IonItem>
-              <IonLabel position="floating">Email</IonLabel>
-              <IonInput
+            <div className="auth-fields">
+              <input
+                className="auth-input"
                 type="email"
+                placeholder="Email"
                 value={email}
-                onIonInput={(e) => setEmail(e.detail.value!)}
+                onChange={(e) => setEmail(e.target.value)}
               />
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Mot de passe</IonLabel>
-              <IonInput
+              <input
+                className="auth-input"
                 type="password"
+                placeholder="Mot de passe"
                 value={password}
-                onIonInput={(e) => setPassword(e.detail.value!)}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               />
-            </IonItem>
-          </IonList>
+            </div>
 
-          {error && (
-            <IonText color="danger">
-              <p className="login-error">{error}</p>
-            </IonText>
-          )}
+            {error && (
+              <IonText color="danger">
+                <p className="auth-error">{error}</p>
+              </IonText>
+            )}
 
-          <IonButton expand="block" onClick={handleLogin} className="login-btn">
-            Se connecter
-          </IonButton>
+            <IonButton expand="block" onClick={handleLogin} className="auth-submit">
+              Se connecter
+            </IonButton>
 
-          <IonButton expand="block" fill="outline" routerLink="/register" className="login-btn">
-            Créer un compte
-          </IonButton>
-
-          <div className="demo-section">
-            <IonNote>Comptes de démo (mot de passe : password123)</IonNote>
-            <div className="demo-accounts">
-              <IonButton size="small" fill="clear" onClick={() => loginAsDemo('marie@snapshoot.com')}>
-                Marie (Paris)
-              </IonButton>
-              <IonButton size="small" fill="clear" onClick={() => loginAsDemo('thomas@snapshoot.com')}>
-                Thomas (Lyon)
-              </IonButton>
-              <IonButton size="small" fill="clear" onClick={() => loginAsDemo('sophie@snapshoot.com')}>
-                Sophie (Marseille)
-              </IonButton>
-              <IonButton size="small" fill="clear" onClick={() => loginAsDemo('lucas@snapshoot.com')}>
-                Lucas (Bordeaux)
+            <div className="auth-footer">
+              <span>Pas encore de compte ?</span>
+              <IonButton fill="clear" size="small" routerLink="/register">
+                Créer un compte
               </IonButton>
             </div>
           </div>

@@ -1,24 +1,8 @@
 import { useState } from 'react';
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonTextarea,
-  IonButton,
-  IonText,
-  IonButtons,
-  IonBackButton,
-  IonSelect,
-  IonSelectOption,
-} from '@ionic/react';
+import { IonPage, IonContent, IonButton, IonText } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { register } from '../services/fakeApi';
+import './auth.css';
 
 const VILLES = [
   'Paris', 'Lyon', 'Marseille', 'Bordeaux', 'Toulouse',
@@ -37,7 +21,6 @@ const Register: React.FC = () => {
 
   function handleRegister() {
     setError('');
-
     if (!username || !email || !password) {
       setError('Veuillez remplir tous les champs obligatoires.');
       return;
@@ -50,7 +33,6 @@ const Register: React.FC = () => {
       setError('Les mots de passe ne correspondent pas.');
       return;
     }
-
     const result = register({ email, password, username, bio, city });
     if (result.error) {
       setError(result.error);
@@ -61,84 +43,78 @@ const Register: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/login" />
-          </IonButtons>
-          <IonTitle>Créer un compte</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <IonContent className="auth-content">
+        <div className="auth-wrapper">
+          <div className="auth-card">
+            <div className="auth-brand">
+              <h1>Créer un compte</h1>
+              <p>Rejoins la communauté Snapshoot</p>
+            </div>
 
-      <IonContent>
-        <div style={{ padding: '16px 0' }}>
-          <IonList>
-            <IonItem>
-              <IonLabel position="floating">Nom d'utilisateur *</IonLabel>
-              <IonInput
+            <div className="auth-fields">
+              <input
+                className="auth-input"
+                placeholder="Nom d'utilisateur *"
                 value={username}
-                onIonInput={(e) => setUsername(e.detail.value!)}
-                maxlength={30}
+                maxLength={30}
+                onChange={(e) => setUsername(e.target.value)}
               />
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Email *</IonLabel>
-              <IonInput
+              <input
+                className="auth-input"
                 type="email"
+                placeholder="Email *"
                 value={email}
-                onIonInput={(e) => setEmail(e.detail.value!)}
+                onChange={(e) => setEmail(e.target.value)}
               />
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Mot de passe *</IonLabel>
-              <IonInput
+              <input
+                className="auth-input"
                 type="password"
+                placeholder="Mot de passe *"
                 value={password}
-                onIonInput={(e) => setPassword(e.detail.value!)}
+                onChange={(e) => setPassword(e.target.value)}
               />
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Confirmer le mot de passe *</IonLabel>
-              <IonInput
+              <input
+                className="auth-input"
                 type="password"
+                placeholder="Confirmer le mot de passe *"
                 value={confirm}
-                onIonInput={(e) => setConfirm(e.detail.value!)}
+                onChange={(e) => setConfirm(e.target.value)}
               />
-            </IonItem>
-            <IonItem>
-              <IonLabel>Ville</IonLabel>
-              <IonSelect value={city} onIonChange={(e) => setCity(e.detail.value)}>
+              <select
+                className="auth-select"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              >
                 {VILLES.map((v) => (
-                  <IonSelectOption key={v} value={v}>
-                    {v}
-                  </IonSelectOption>
+                  <option key={v} value={v}>{v}</option>
                 ))}
-              </IonSelect>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Bio (optionnel)</IonLabel>
-              <IonTextarea
+              </select>
+              <textarea
+                className="auth-textarea"
+                placeholder="Bio (optionnel)"
                 value={bio}
-                onIonInput={(e) => setBio(e.detail.value!)}
+                maxLength={150}
                 rows={2}
-                maxlength={150}
+                onChange={(e) => setBio(e.target.value)}
               />
-            </IonItem>
-          </IonList>
+            </div>
 
-          {error && (
-            <IonText color="danger">
-              <p style={{ textAlign: 'center', padding: '8px' }}>{error}</p>
-            </IonText>
-          )}
+            {error && (
+              <IonText color="danger">
+                <p className="auth-error">{error}</p>
+              </IonText>
+            )}
 
-          <div style={{ padding: '16px' }}>
-            <IonButton expand="block" onClick={handleRegister}>
+            <IonButton expand="block" onClick={handleRegister} className="auth-submit">
               Créer mon compte
             </IonButton>
-            <IonButton expand="block" fill="clear" routerLink="/login">
-              Déjà un compte ? Se connecter
-            </IonButton>
+
+            <div className="auth-footer">
+              <span>Déjà un compte ?</span>
+              <IonButton fill="clear" size="small" routerLink="/login">
+                Se connecter
+              </IonButton>
+            </div>
           </div>
         </div>
       </IonContent>
