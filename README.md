@@ -1,4 +1,4 @@
-# Snapshoot
+# BeUnreal
 
 Application mobile de partage de stories géolocalisées, développée avec Ionic React et Capacitor.
 

@@ -65,6 +65,12 @@ const GroupChat: React.FC = () => {
     e.target.value = '';
   }
 
+  function handleCameraPhoto(dataUrl: string) {
+    if (!currentUser || !group) return;
+    sendGroupMessage({ groupId: group.id, senderId: currentUser.id, content: 'Photo', type: 'image', imageUrl: dataUrl });
+    loadGroup();
+  }
+
   if (!currentUser || !group) return null;
 
   return (
@@ -110,7 +116,7 @@ const GroupChat: React.FC = () => {
         </div>
       </IonContent>
 
-      <ChatInputBar onSend={handleSendText} onImageSend={handleImageSend} />
+      <ChatInputBar onSend={handleSendText} onImageSend={handleImageSend} onCameraPhoto={handleCameraPhoto} />
     </IonPage>
   );
 };

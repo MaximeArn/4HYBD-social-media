@@ -48,7 +48,7 @@ const Register: React.FC = () => {
           <div className="auth-card">
             <div className="auth-brand">
               <h1>Créer un compte</h1>
-              <p>Rejoins la communauté Snapshoot</p>
+              <p>Rejoins la communauté BeUnreal</p>
             </div>
 
             <div className="auth-fields">

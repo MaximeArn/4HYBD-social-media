@@ -21,7 +21,7 @@ const AppHeader: React.FC<Props> = ({ title, showBack = false }) => {
           </IonButtons>
         )}
         <IonTitle>
-          <span className="toolbar-logo">{title ?? "Snapshoot"}</span>
+          <span className="toolbar-logo">{title ?? "BeUnreal"}</span>
         </IonTitle>
       </IonToolbar>
     </IonHeader>

@@ -15,7 +15,7 @@ export const db: {
   users: [
     {
       id: "u1",
-      email: "marie@snapshoot.com",
+      email: "marie@beunreal.com",
       password: "password123",
       username: "Marie Dupont",
       bio: "Passionnée de photo | Parisienne",
@@ -26,7 +26,7 @@ export const db: {
     },
     {
       id: "u2",
-      email: "thomas@snapshoot.com",
+      email: "thomas@beunreal.com",
       password: "password123",
       username: "Thomas Martin",
       bio: "Musicien | Lyon forever",
@@ -37,7 +37,7 @@ export const db: {
     },
     {
       id: "u3",
-      email: "sophie@snapshoot.com",
+      email: "sophie@beunreal.com",
       password: "password123",
       username: "Sophie Bernard",
       bio: "La mer c'est la vie | Marseille",
@@ -48,7 +48,7 @@ export const db: {
     },
     {
       id: "u4",
-      email: "lucas@snapshoot.com",
+      email: "lucas@beunreal.com",
       password: "password123",
       username: "Lucas Petit",
       bio: "Amateur de bons vins | Bordeaux",
@@ -59,7 +59,7 @@ export const db: {
     },
     {
       id: "u5",
-      email: "emma@snapshoot.com",
+      email: "emma@beunreal.com",
       password: "password123",
       username: "Emma Rousseau",
       bio: "Artiste | Toulouse la rose",
@@ -70,7 +70,7 @@ export const db: {
     },
     {
       id: "u6",
-      email: "hugo@snapshoot.com",
+      email: "hugo@beunreal.com",
       password: "password123",
       username: "Hugo Moreau",
       bio: "Fan de foot | Ch'ti fier",
@@ -81,7 +81,7 @@ export const db: {
     },
     {
       id: "u7",
-      email: "camille@snapshoot.com",
+      email: "camille@beunreal.com",
       password: "password123",
       username: "Camille Simon",
       bio: "Nature & Voyage | Nantes",
@@ -92,7 +92,7 @@ export const db: {
     },
     {
       id: "u8",
-      email: "antoine@snapshoot.com",
+      email: "antoine@beunreal.com",
       password: "password123",
       username: "Antoine Lefebvre",
       bio: "Histoire & Culture | Strasbourg",

@@ -102,7 +102,7 @@ const Profile: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle><span className="toolbar-logo">Snapshoot</span></IonTitle>
+          <IonTitle><span className="toolbar-logo">BeUnreal</span></IonTitle>
           <IonButtons slot="end">
             <IonButton fill="clear" color="light" onClick={() => history.push('/tabs/settings')}>
               <IonIcon icon={settingsOutline} />

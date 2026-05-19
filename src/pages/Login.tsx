@@ -30,7 +30,7 @@ const Login: React.FC = () => {
         <div className="auth-wrapper">
           <div className="auth-card">
             <div className="auth-brand">
-              <h1>Snapshoot</h1>
+              <h1>BeUnreal</h1>
               <p>Capture & partage tes moments</p>
             </div>
 

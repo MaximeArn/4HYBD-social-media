@@ -67,6 +67,12 @@ const Chat: React.FC = () => {
     e.target.value = '';
   }
 
+  function handleCameraPhoto(dataUrl: string) {
+    if (!currentUser || !conversation) return;
+    sendMessage({ conversationId: conversation.id, senderId: currentUser.id, content: 'Photo', type: 'image', imageUrl: dataUrl });
+    loadConversation();
+  }
+
   if (!currentUser || !otherUser) return null;
 
   return (
@@ -96,7 +102,7 @@ const Chat: React.FC = () => {
         </div>
       </IonContent>
 
-      <ChatInputBar onSend={handleSendText} onImageSend={handleImageSend} />
+      <ChatInputBar onSend={handleSendText} onImageSend={handleImageSend} onCameraPhoto={handleCameraPhoto} />
     </IonPage>
   );
 };

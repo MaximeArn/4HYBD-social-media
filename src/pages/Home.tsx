@@ -19,6 +19,8 @@ import {
 import AppHeader from '../components/AppHeader';
 import { add, locationOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
+import { Camera } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 import {
   getCurrentUser,
   getStoriesNearby,
@@ -83,6 +85,19 @@ const Home: React.FC = () => {
     const reader = new FileReader();
     reader.onload = () => setNewImage(reader.result as string);
     reader.readAsDataURL(file);
+  }
+
+  async function handleCameraPick() {
+    try {
+      const photo = await Camera.takePhoto({ quality: 80 });
+      if (photo.thumbnail) {
+        setNewImage(`data:image/jpeg;base64,${photo.thumbnail}`);
+      } else if (photo.uri) {
+        setNewImage(photo.uri);
+      }
+    } catch {
+      // user cancelled
+    }
   }
 
   function handlePostStory() {
@@ -195,10 +210,16 @@ const Home: React.FC = () => {
                       <p>Ajouter une photo</p>
                     </div>
                   )}
-                  <label className="pick-image-btn">
-                    <span>Choisir une photo</span>
-                    <input type="file" accept="image/*" onChange={handleImagePick} style={{ display: 'none' }} />
-                  </label>
+                  {Capacitor.isNativePlatform() ? (
+                    <button className="pick-image-btn" onClick={handleCameraPick}>
+                      <span>Prendre une photo</span>
+                    </button>
+                  ) : (
+                    <label className="pick-image-btn">
+                      <span>Choisir une photo</span>
+                      <input type="file" accept="image/*" onChange={handleImagePick} style={{ display: 'none' }} />
+                    </label>
+                  )}
                 </div>
 
                 <textarea

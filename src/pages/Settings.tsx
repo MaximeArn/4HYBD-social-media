@@ -90,7 +90,7 @@ const Settings: React.FC = () => {
             <IonItem lines="full">
               <IonIcon icon={informationCircleOutline} slot="start" className="settings-icon" />
               <IonLabel>Application</IonLabel>
-              <span className="settings-value">Snapshoot</span>
+              <span className="settings-value">BeUnreal</span>
             </IonItem>
             <IonItem lines="none">
               <IonIcon icon={informationCircleOutline} slot="start" className="settings-icon" style={{ opacity: 0 }} />

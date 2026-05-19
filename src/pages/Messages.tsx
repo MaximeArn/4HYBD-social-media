@@ -173,7 +173,7 @@ const Messages: React.FC = () => {
         <IonModal isOpen={showNewChat} onDidDismiss={() => setShowNewChat(false)}>
           <IonHeader>
             <IonToolbar color="primary">
-              <IonTitle><span className="toolbar-logo">Snapshoot</span></IonTitle>
+              <IonTitle><span className="toolbar-logo">BeUnreal</span></IonTitle>
               <IonButtons slot="end">
                 <IonButton fill="clear" color="light" onClick={() => setShowNewChat(false)}>
                   Annuler
