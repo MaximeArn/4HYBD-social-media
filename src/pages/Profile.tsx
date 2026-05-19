@@ -19,7 +19,10 @@ import {
   locationOutline,
   imagesOutline,
   settingsOutline,
+  cameraOutline,
 } from 'ionicons/icons';
+import { Camera } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 import { useHistory } from 'react-router-dom';
 import {
   getCurrentUser,
@@ -55,6 +58,7 @@ const Profile: React.FC = () => {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [city, setCity] = useState('');
+  const [avatar, setAvatar] = useState('');
   const [toastMsg, setToastMsg] = useState('');
   const history = useHistory();
 
@@ -69,7 +73,26 @@ const Profile: React.FC = () => {
     setUsername(current.username);
     setBio(current.bio);
     setCity(current.location.city);
+    setAvatar(current.avatar);
     setStories(getStoriesByUser(current.id));
+  }
+
+  async function handleCameraAvatar() {
+    try {
+      const photo = await Camera.takePhoto({ quality: 80 });
+      if (photo.thumbnail) setAvatar(`data:image/jpeg;base64,${photo.thumbnail}`);
+      else if (photo.uri) setAvatar(photo.uri);
+    } catch {
+      // user cancelled
+    }
+  }
+
+  function handleAvatarFilePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setAvatar(reader.result as string);
+    reader.readAsDataURL(file);
   }
 
   function handleSave() {
@@ -78,6 +101,7 @@ const Profile: React.FC = () => {
     const updated = updateUser(user.id, {
       username: username.trim(),
       bio: bio.trim(),
+      avatar,
       location: { ...coords, city },
     });
     if (updated) {
@@ -92,6 +116,7 @@ const Profile: React.FC = () => {
     setUsername(user.username);
     setBio(user.bio);
     setCity(user.location.city);
+    setAvatar(user.avatar);
     setShowEditModal(false);
   }
 
@@ -185,9 +210,21 @@ const Profile: React.FC = () => {
           <IonContent>
             <div className="profile-edit-form">
               <div className="profile-edit-avatar-row">
-                <IonAvatar className="profile-edit-avatar">
-                  <img src={user.avatar} alt={user.username} />
-                </IonAvatar>
+                <div className="profile-edit-avatar-wrapper">
+                  <IonAvatar className="profile-edit-avatar">
+                    <img src={avatar} alt={user.username} />
+                  </IonAvatar>
+                  {Capacitor.isNativePlatform() ? (
+                    <IonButton fill="clear" className="profile-edit-avatar-btn" onClick={handleCameraAvatar}>
+                      <IonIcon icon={cameraOutline} />
+                    </IonButton>
+                  ) : (
+                    <label className="profile-edit-avatar-btn">
+                      <IonIcon icon={cameraOutline} />
+                      <input type="file" accept="image/*" onChange={handleAvatarFilePick} style={{ display: 'none' }} />
+                    </label>
+                  )}
+                </div>
               </div>
 
               <div className="profile-edit-field">
