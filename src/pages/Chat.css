@@ -26,6 +26,9 @@ html.ion-palette-dark .chat-content {
   align-items: flex-end;
   gap: 6px;
   padding: 2px 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .row-me {
@@ -49,6 +52,7 @@ html.ion-palette-dark .chat-content {
   display: flex;
   flex-direction: column;
   max-width: 72%;
+  min-width: 0;
 }
 
 .row-me .bubble-col {
@@ -160,9 +164,17 @@ html.ion-palette-dark .chat-footer {
 .chat-input {
   flex: 1;
   --background: #f4f4f8;
+  --color: #000000;
+  --placeholder-color: #888888;
   --border-radius: 20px;
   --padding-start: 14px;
   --padding-end: 14px;
+}
+
+html.ion-palette-dark .chat-input {
+  --background: #2c2c2e;
+  --color: #ffffff;
+  --placeholder-color: #8e8e93;
 }
 
 .send-btn {

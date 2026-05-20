@@ -53,18 +53,18 @@ const Home: React.FC = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const result = getStoriesNearby({ lat: pos.coords.latitude, lng: pos.coords.longitude, radiusKm: 1000 });
+          const result = getStoriesNearby({ lat: pos.coords.latitude, lng: pos.coords.longitude });
           setStories(result);
           setLoading(false);
         },
         () => {
-          const result = getStoriesNearby({ lat: currentUser.location.lat, lng: currentUser.location.lng, radiusKm: 1000 });
+          const result = getStoriesNearby({ lat: currentUser.location.lat, lng: currentUser.location.lng });
           setStories(result);
           setLoading(false);
         }
       );
     } else {
-      const result = getStoriesNearby({ lat: currentUser.location.lat, lng: currentUser.location.lng, radiusKm: 1000 });
+      const result = getStoriesNearby({ lat: currentUser.location.lat, lng: currentUser.location.lng });
       setStories(result);
       setLoading(false);
     }

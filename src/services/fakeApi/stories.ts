@@ -24,7 +24,6 @@ function getDistance(
 export function getStoriesNearby({
   lat,
   lng,
-  radiusKm = 1000,
 }: GetStoriesNearbyDto): (Story & { user: User; distance: number })[] {
   const now = new Date();
   return db.stories
@@ -34,8 +33,8 @@ export function getStoriesNearby({
       const distance = getDistance(lat, lng, s.location.lat, s.location.lng);
       return { ...s, user, distance };
     })
-    .filter((s) => s.distance <= radiusKm)
-    .sort((a, b) => a.distance - b.distance);
+    .filter((s) => s.distance <= 100)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
 export function getStoriesByUser(userId: string): Story[] {
